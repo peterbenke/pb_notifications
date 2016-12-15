@@ -1,0 +1,5 @@
+# cat=basic; type=int; label=Storage pid with the notifications (leave empty if you don't want to respect the storage pid)
+notificationsStoragePid =
+
+# cat=basic; type=int; label=Max. number of notifications in toolbar
+maxNumberOfNotificationsInToolbar =

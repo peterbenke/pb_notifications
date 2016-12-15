@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+	<file source-language="en" datatype="plaintext" original="messages" date="2016-12-08T11:56:21Z" product-name="pb_notifications">
+		<header/>
+		<body>
+
+			<trans-unit id="tx_pbnotifications_domain_model_notification">
+				<source>Notification</source>
+			</trans-unit>
+			<trans-unit id="tx_pbnotifications_domain_model_notification.title">
+				<source>Title</source>
+			</trans-unit>
+			<trans-unit id="tx_pbnotifications_domain_model_notification.content">
+				<source>Content</source>
+			</trans-unit>
+			<trans-unit id="tx_pbnotifications_domain_model_notification.visible_until_marked_as_read">
+				<source>Visible until marked as read</source>
+			</trans-unit>
+			<trans-unit id="tx_pbnotifications_domain_model_notification.visible_from">
+				<source>Visible from</source>
+			</trans-unit>
+			<trans-unit id="tx_pbnotifications_domain_model_notification.visible_until">
+				<source>Visible until</source>
+			</trans-unit>
+			<trans-unit id="tx_pbnotifications_domain_model_notification.type">
+				<source>Type</source>
+			</trans-unit>
+			<trans-unit id="tx_pbnotifications_domain_model_notification.marked_as_read">
+				<source>Marked as read</source>
+			</trans-unit>
+
+			<trans-unit id="toolbaritem.title">
+				<source>Notifications</source>
+			</trans-unit>
+			<trans-unit id="toolbaritem.noNotifications">
+				<source>No unread notifications</source>
+			</trans-unit>
+			<trans-unit id="toolbaritem.allNotifications">
+				<source>List all notifications</source>
+			</trans-unit>
+			<trans-unit id="toolbaritem.andMore">
+				<source>And more...</source>
+			</trans-unit>
+
+			<trans-unit id="notifications.list.headline">
+				<source>Notifications</source>
+			</trans-unit>
+			<trans-unit id="notifications.list.headline.for">
+				<source>for</source>
+			</trans-unit>
+			<trans-unit id="notifications.list.dateFormat">
+				<source>d/m/Y</source>
+			</trans-unit>
+			<trans-unit id="notifications.list.gotit">
+				<source>OK, got it</source>
+			</trans-unit>
+			<trans-unit id="notifications.list.markAsUnread">
+				<source>Mark as unread</source>
+			</trans-unit>
+			<trans-unit id="notifications.list.noNotifications">
+				<source>No notifications found.</source>
+			</trans-unit>
+
+			<trans-unit id="module.notifications.title">
+				<source>Notifications</source>
+			</trans-unit>
+
+			<trans-unit id="widget.pagination.previous">
+				<source>Previous</source>
+			</trans-unit>
+			<trans-unit id="widget.pagination.next">
+				<source>Next</source>
+			</trans-unit>
+			<trans-unit id="widget.pagination.first">
+				<source>First</source>
+			</trans-unit>
+			<trans-unit id="widget.pagination.last">
+				<source>Last</source>
+			</trans-unit>
+			<trans-unit id="widget.pagination.records">
+				<source>Records</source>
+			</trans-unit>
+			<trans-unit id="widget.pagination.page">
+				<source>Page</source>
+			</trans-unit>
+			<trans-unit id="widget.pagination.refresh">
+				<source>Refresh</source>
+			</trans-unit>
+
+		</body>
+	</file>
+</xliff>

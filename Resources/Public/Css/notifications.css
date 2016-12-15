@@ -1,0 +1,35 @@
+.tx_pb-notifications .panel.markedAsRead{
+	opacity:0.4;
+}
+.tx_pb-notifications .panel-body{
+	position:relative;
+}
+.tx_pb-notifications .panel-body h2{
+	margin-top:0;
+}
+.tx_pb-notifications .panel-body .images{
+	float:right;
+	width:260px;
+	text-align: right;
+}
+.tx_pb-notifications .panel-body .images a,.tx_pb-notifications .panel-body .images a:hover{
+	text-decoration:none;
+}
+.tx_pb-notifications .panel-body .images img{
+	margin-bottom:5px;
+}
+.tx_pb-notifications .panel-body .content{
+
+}
+.tx_pb-notifications hr{
+	border-top: 1px dotted #ddd;
+	border-bottom: 1px dotted #fff;
+}
+.tx_pb-notifications ul.pagination .current span{
+	background-color:#f59936;
+}
+.tx_pb-notifications ul.pagination > li > a,
+.tx_pb-notifications ul.pagination > li > span{
+	min-width:30px;
+	text-align:center;
+}

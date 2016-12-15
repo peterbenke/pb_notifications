@@ -1,0 +1,66 @@
+{namespace pb=PeterBenke\PbNotifications\ViewHelpers}
+
+<ul class="dropdown-list" style="width:250px;">
+
+	<li class="dropdown-header"><strong><f:translate key="toolbaritem.title" /></strong></li>
+
+	<f:if condition="{onlyUnreadNotifications -> f:count()} > 0">
+
+		<!-- List of notifications -->
+		<f:then>
+			<f:for each="{onlyUnreadNotifications}" as="notification" iteration="iteration">
+
+				<f:if condition="{iteration.index} < {maxNumberOfNotificationsInToolbar}">
+
+					<li class="divider"></li>
+					<li>
+						<f:if condition="{notification.type} == 1">
+							<f:then>
+							<span class="text-danger">
+								<i class="fa fa-exclamation"></i>&nbsp;
+								<f:format.date date="{notification.date}" format="{f:translate(key:'notifications.list.dateFormat')}" />
+								<br>
+								<strong>{notification.title}</strong>:
+							</span>
+							</f:then>
+							<f:else>
+							<span class="text-primary">
+								<i class="fa fa-info"></i>&nbsp;
+								<f:format.date date="{notification.date}" format="{f:translate(key:'notifications.list.dateFormat')}" />
+								<br>
+								<strong>{notification.title}</strong>:
+							</span>
+							</f:else>
+						</f:if>
+						<br>
+						<f:format.crop maxCharacters="45" respectWordBoundaries="false">
+							{notification.content -> f:format.stripTags()}
+						</f:format.crop>
+					</li>
+
+				</f:if>
+
+			</f:for>
+
+			<f:if condition="{pb:countUnreadNotifications(notifications:'{onlyUnreadNotifications}')} > {maxNumberOfNotificationsInToolbar}">
+
+				<li class="divider"></li>
+				<li><em><f:translate key="toolbaritem.andMore" /></em></li>
+
+			</f:if>
+
+		</f:then>
+
+		<!-- No notifications exist -->
+		<f:else>
+			<li><em><f:translate key="toolbaritem.noNotifications" /></em></li>
+		</f:else>
+
+	</f:if>
+
+	<li class="divider"></li>
+	<li id="pbnotifications_listnotifications" class="dropdown-intro typo3-module-menu-item submodule mod-pbnotifications_listnotifications" data-modulename="pbnotifications_listnotifications">
+		<a href="{notificationListUrl}"><span class="text-warning"><i class="fa fa-list"></i>&nbsp; <f:translate key="toolbaritem.allNotifications" /></span></a>
+	</li>
+
+</ul>

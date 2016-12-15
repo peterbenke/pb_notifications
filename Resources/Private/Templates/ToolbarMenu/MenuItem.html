@@ -1,0 +1,17 @@
+{namespace core=TYPO3\CMS\Core\ViewHelpers}
+{namespace pb=PeterBenke\PbNotifications\ViewHelpers}
+
+<f:if condition="{pb:countUnreadNotifications(notifications:'{notifications}')} > 0">
+	<f:then>
+		<span title="{f:translate(key:'toolbaritem.title')}">
+			<core:icon identifier="apps-toolbar-menu-pbnotifications-alert" size="small" />
+		</span>
+		<span id="tx-pbnotifications-counter" class="badge badge-danger" style="display: inline;"><pb:countUnreadNotifications notifications="{notifications}" /></span>
+	</f:then>
+
+	<f:else>
+		<span title="{f:translate(key:'toolbaritem.title')}">
+			<core:icon identifier="apps-toolbar-menu-pbnotifications" size="small" />
+		</span>
+	</f:else>
+</f:if>

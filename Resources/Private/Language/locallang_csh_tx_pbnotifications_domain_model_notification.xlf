@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+	<file source-language="en" datatype="plaintext" original="messages" date="2016-12-08T11:56:21Z" product-name="pb_notifications">
+		<header/>
+		<body>
+			<trans-unit id="title.description">
+				<source>title</source>
+			</trans-unit>
+			<trans-unit id="content.description">
+				<source>content</source>
+			</trans-unit>
+			<trans-unit id="visible_until_marked_as_read.description">
+				<source>visibleUntilMarkedAsRead</source>
+			</trans-unit>
+			<trans-unit id="visible_from.description">
+				<source>visibleFrom</source>
+			</trans-unit>
+			<trans-unit id="visible_until.description">
+				<source>visibleUntil</source>
+			</trans-unit>
+			<trans-unit id="type.description">
+				<source>type</source>
+			</trans-unit>
+			<trans-unit id="marked_as_read.description">
+				<source>markedAsRead</source>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>

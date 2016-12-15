@@ -1,0 +1,92 @@
+<?xml version='1.0' encoding='utf-8'?>
+<xliff version="1.0">
+	<file source-language="en" target-language="de" datatype="plaintext" original="messages" date="2016-12-08T11:56:21Z" product-name="pb_notifications">
+		<header/>
+		<body>
+
+			<trans-unit id="tx_pbnotifications_domain_model_notification">
+				<target>Benachrichtigung</target>
+			</trans-unit>
+			<trans-unit id="tx_pbnotifications_domain_model_notification.title">
+				<target>Titel</target>
+			</trans-unit>
+			<trans-unit id="tx_pbnotifications_domain_model_notification.content">
+				<target>Inhalt</target>
+			</trans-unit>
+			<trans-unit id="tx_pbnotifications_domain_model_notification.visible_until_marked_as_read">
+				<target>Sichtbar bis Benachrichtigung als gelesen markiert wurde</target>
+			</trans-unit>
+			<trans-unit id="tx_pbnotifications_domain_model_notification.visible_from">
+				<target>Sichtbar von</target>
+			</trans-unit>
+			<trans-unit id="tx_pbnotifications_domain_model_notification.visible_until">
+				<target>Sichtbar bis</target>
+			</trans-unit>
+			<trans-unit id="tx_pbnotifications_domain_model_notification.type">
+				<target>Typ</target>
+			</trans-unit>
+			<trans-unit id="tx_pbnotifications_domain_model_notification.marked_as_read">
+				<target>Markiert als gelesen</target>
+			</trans-unit>
+
+			<trans-unit id="toolbaritem.title">
+				<target>Benachrichtigungen</target>
+			</trans-unit>
+			<trans-unit id="toolbaritem.noNotifications">
+				<target>Keine ungelesene Benachrichtigungen</target>
+			</trans-unit>
+			<trans-unit id="toolbaritem.allNotifications">
+				<target>Alle Benachrichtigungen anzeigen</target>
+			</trans-unit>
+			<trans-unit id="toolbaritem.andMore">
+				<target>Und weitere...</target>
+			</trans-unit>
+
+			<trans-unit id="notifications.list.headline">
+				<target>Benachrichtigungen</target>
+			</trans-unit>
+			<trans-unit id="notifications.list.headline.for">
+				<target>für</target>
+			</trans-unit>
+			<trans-unit id="notifications.list.dateFormat">
+				<target>d.m.Y</target>
+			</trans-unit>
+			<trans-unit id="notifications.list.gotit">
+				<target>OK, verstanden</target>
+			</trans-unit>
+			<trans-unit id="notifications.list.markAsUnread">
+				<target>Mark as unread</target>
+			</trans-unit>
+			<trans-unit id="notifications.list.noNotifications">
+				<target>Keine Benachrichtigungen gefunden.</target>
+			</trans-unit>
+
+			<trans-unit id="module.notifications.title">
+				<target>Benachrichtigungen</target>
+			</trans-unit>
+
+			<trans-unit id="widget.pagination.first" approved="yes">
+				<target state="translated">Erste</target>
+			</trans-unit>
+			<trans-unit id="widget.pagination.last" approved="yes">
+				<target state="translated">Letzte</target>
+			</trans-unit>
+			<trans-unit id="widget.pagination.next" approved="yes">
+				<target state="translated">Nächste</target>
+			</trans-unit>
+			<trans-unit id="widget.pagination.page" approved="yes">
+				<target state="translated">Seite</target>
+			</trans-unit>
+			<trans-unit id="widget.pagination.previous" approved="yes">
+				<target state="translated">Vorherige</target>
+			</trans-unit>
+			<trans-unit id="widget.pagination.records" approved="yes">
+				<target state="translated">Datensätze</target>
+			</trans-unit>
+			<trans-unit id="widget.pagination.refresh" approved="yes">
+				<target state="translated">Aktualisieren</target>
+			</trans-unit>
+
+		</body>
+	</file>
+</xliff>
