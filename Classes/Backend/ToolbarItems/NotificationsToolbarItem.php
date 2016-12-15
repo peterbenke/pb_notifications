@@ -122,8 +122,19 @@ class NotificationsToolbarItem implements ToolbarItemInterface{
 	 * @return bool TRUE if user has access, FALSE if not
 	 */
 	public function checkAccess(){
-		$conf = $this->getBackendUser()->getTSConfig('backendToolbarItem.tx_pbnotifications.disabled');
-		return $conf['value'] != 1;
+
+		$beUser = $this->getBackendUser();
+		if (
+			$beUser->isAdmin()
+			||
+			\TYPO3\CMS\Core\Utility\GeneralUtility::inList($beUser->groupData['modules'], 'user_PbNotificationsNotifications')
+		) {
+			return true;
+		}
+		return false;
+
+		// $conf = $this->getBackendUser()->getTSConfig('backendToolbarItem.tx_pbnotifications.disabled');
+		// return $conf['value'] != 1;
 	}
 
 	/**
@@ -132,7 +143,6 @@ class NotificationsToolbarItem implements ToolbarItemInterface{
 	 * @return string HTML
 	 */
 	public function getItem(){
-
 
 		if (!$this->checkAccess()) {
 			return '';
