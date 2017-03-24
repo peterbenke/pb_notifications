@@ -215,6 +215,8 @@ return array(
 				'autoSizeMax' => 30,
 				'maxitems' => 9999,
 				'multiple' => 0,
+				'enableMultiSelectFilterTextfield' => true,
+				/*
 				'wizards' => array(
 					'_PADDING' => 1,
 					'_VERTICAL' => 1,
@@ -242,6 +244,7 @@ return array(
 						),
 					),
 				),
+				*/
 			),
 		),
 		
