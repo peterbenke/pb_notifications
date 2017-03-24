@@ -108,7 +108,15 @@ class NotificationController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCon
 	 */
 	public function listAction(){
 
-		$notifications = $this->notificationRepository->findAll();
+		#$beUserGroups = $this->getBackendUserGroupsAsArray($GLOBALS['BE_USER']->user['uid']);
+		#$beUserGroups = $this->getBackendUserGroupsAsArray($GLOBALS['BE_USER']->user['uid']);
+
+
+		#print_r($GLOBALS['BE_USER']->userGroups);
+
+
+		// $notifications = $this->notificationRepository->findAll();
+		$notifications = $this->notificationRepository->findOnlyNotificationsAssignedToUsersUserGroup();
 
 		$this->view->assignMultiple(
 			array(

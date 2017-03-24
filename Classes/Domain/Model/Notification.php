@@ -67,7 +67,14 @@ class Notification extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
      * @validate NotEmpty
      */
     protected $type = 0;
-    
+
+	/**
+	 * beGroups
+	 *
+	 * @var string
+	 */
+	protected $beGroups = '';
+
     /**
      * markedAsRead
      *
@@ -135,7 +142,7 @@ class Notification extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     {
         $this->title = $title;
     }
-    
+
     /**
      * Returns the content
      *
@@ -197,7 +204,21 @@ class Notification extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     {
         $this->type = $type;
     }
-    
+
+	/**
+	 * @return string
+	 */
+	public function getBeGroups() {
+		return $this->beGroups;
+	}
+
+	/**
+	 * @param string $beGroups
+	 */
+	public function setBeGroups($beGroups) {
+		$this->beGroups = $beGroups;
+	}
+
     /**
      * Adds a BackendUser
      *

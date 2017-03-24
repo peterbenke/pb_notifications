@@ -15,14 +15,16 @@ namespace PeterBenke\PbNotifications\ViewHelpers\Widget\Controller;
 	 * The TYPO3 project - inspiring people to share!
 	 */
 
-/**
- * Paginate controller to create the pagination.
- * Extended version from fluid core
- *
- */
-class PaginateController extends \TYPO3\CMS\Fluid\Core\Widget\AbstractWidgetController
-{
+use TYPO3\CMS\Core\Utility\ArrayUtility;
+use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
+use TYPO3\CMS\Extbase\Persistence\QueryResultInterface;
+use TYPO3\CMS\Fluid\Core\Widget\AbstractWidgetController;
 
+/**
+ * Class PaginateController
+ */
+class PaginateController extends AbstractWidgetController
+{
 	/**
 	 * @var array
 	 */
@@ -31,11 +33,12 @@ class PaginateController extends \TYPO3\CMS\Fluid\Core\Widget\AbstractWidgetCont
 		'insertAbove' => false,
 		'insertBelow' => true,
 		'maximumNumberOfLinks' => 99,
-		'templatePath' => ''
+		'addQueryStringMethod' => '',
+		'section' => ''
 	];
 
 	/**
-	 * @var \TYPO3\CMS\Extbase\Persistence\QueryResultInterface
+	 * @var QueryResultInterface|ObjectStorage|array
 	 */
 	protected $objects;
 
@@ -45,9 +48,9 @@ class PaginateController extends \TYPO3\CMS\Fluid\Core\Widget\AbstractWidgetCont
 	protected $currentPage = 1;
 
 	/**
-	 * @var string
+	 * @var int
 	 */
-	protected $templatePath = '';
+	protected $maximumNumberOfLinks = 99;
 
 	/**
 	 * @var int
@@ -57,101 +60,83 @@ class PaginateController extends \TYPO3\CMS\Fluid\Core\Widget\AbstractWidgetCont
 	/**
 	 * @var int
 	 */
-	protected $maximumNumberOfLinks = 99;
-
-	/** @var int */
-	protected $initialOffset = 0;
-	/** @var int */
-	protected $initialLimit = 0;
+	protected $displayRangeStart = null;
 
 	/**
-	 * Initialize the action and get correct configuration
-	 *
+	 * @var int
+	 */
+	protected $displayRangeEnd = null;
+
+	/**
 	 * @return void
 	 */
 	public function initializeAction()
 	{
 		$this->objects = $this->widgetConfiguration['objects'];
-		\TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule(
-			$this->configuration,
-			(array)$this->widgetConfiguration['configuration'], true);
-
-		$itemsPerPage = (integer)$this->configuration['itemsPerPage'];
-		if ($itemsPerPage === 0) {
-			throw new \RuntimeException('The itemsPerPage is 0 which is not allowed. Please also add "list.paginate.itemsPerPage" to the TS setting settings.overrideFlexformSettingsIfEmpty!',
-				1400741142);
-		}
-
-		$this->numberOfPages = intval(ceil(count($this->objects) / $itemsPerPage));
-		$this->maximumNumberOfLinks = (integer)$this->configuration['maximumNumberOfLinks'];
-		if (isset($this->configuration['templatePath']) && !empty($this->configuration['templatePath'])) {
-			$this->templatePath = \TYPO3\CMS\Core\Utility\GeneralUtility::getFileAbsFileName($this->configuration['templatePath']);
-		}
-
-		if (isset($this->widgetConfiguration['initial']['offset'])) {
-			$this->initialOffset = (int)$this->widgetConfiguration['initial']['offset'];
-		}
-		if (isset($this->widgetConfiguration['initial']['limit'])) {
-			$this->initialLimit = (int)$this->widgetConfiguration['initial']['limit'];
-		}
+		ArrayUtility::mergeRecursiveWithOverrule($this->configuration, $this->widgetConfiguration['configuration'], false);
+		$itemsPerPage = (int)$this->configuration['itemsPerPage'];
+		$this->numberOfPages = $itemsPerPage > 0 ? ceil(count($this->objects) / $itemsPerPage) : 0;
+		$this->maximumNumberOfLinks = (int)$this->configuration['maximumNumberOfLinks'];
 	}
 
 	/**
-	 * Main action
-	 *
 	 * @param int $currentPage
 	 * @return void
 	 */
 	public function indexAction($currentPage = 1)
 	{
 		// set current page
-		$this->currentPage = (integer)$currentPage;
+		$this->currentPage = (int)$currentPage;
 		if ($this->currentPage < 1) {
 			$this->currentPage = 1;
 		}
-
 		if ($this->currentPage > $this->numberOfPages) {
 			// set $modifiedObjects to NULL if the page does not exist
 			$modifiedObjects = null;
 		} else {
 			// modify query
-			$itemsPerPage = (integer)$this->configuration['itemsPerPage'];
-			$query = $this->objects->getQuery();
-
-			if ($this->currentPage === $this->numberOfPages && $this->initialLimit > 0) {
-				$difference = $this->initialLimit - ((integer)($itemsPerPage * ($this->currentPage - 1)));
-				if ($difference > 0) {
-					$query->setLimit($difference);
-				} else {
-					$query->setLimit($itemsPerPage);
-				}
-			} else {
-				$query->setLimit($itemsPerPage);
-			}
-
+			$itemsPerPage = (int)$this->configuration['itemsPerPage'];
+			$offset = 0;
 			if ($this->currentPage > 1) {
-				$offset = (integer)($itemsPerPage * ($this->currentPage - 1));
-				$offset = $offset + $this->initialOffset;
-				$query->setOffset($offset);
-			} elseif ($this->initialOffset > 0) {
-				$query->setOffset($this->initialOffset);
+				$offset = ((int)($itemsPerPage * ($this->currentPage - 1)));
 			}
-			$modifiedObjects = $query->execute();
+			$modifiedObjects = $this->prepareObjectsSlice($itemsPerPage, $offset);
 		}
-
 		$this->view->assign('contentArguments', [
 			$this->widgetConfiguration['as'] => $modifiedObjects
 		]);
 		$this->view->assign('configuration', $this->configuration);
 		$this->view->assign('pagination', $this->buildPagination());
-
-		if (!empty($this->templatePath)) {
-			$this->view->setTemplatePathAndFilename($this->templatePath);
-		}
 	}
 
 	/**
-	 * Returns an array with the keys "pages", "current", "numberOfPages", "nextPage" & "previousPage"
+	 * If a certain number of links should be displayed, adjust before and after
+	 * amounts accordingly.
+	 *
+	 * @return void
+	 */
+	protected function calculateDisplayRange()
+	{
+		$maximumNumberOfLinks = $this->maximumNumberOfLinks;
+		if ($maximumNumberOfLinks > $this->numberOfPages) {
+			$maximumNumberOfLinks = $this->numberOfPages;
+		}
+		$delta = floor($maximumNumberOfLinks / 2);
+		$this->displayRangeStart = $this->currentPage - $delta;
+		$this->displayRangeEnd = $this->currentPage + $delta - ($maximumNumberOfLinks % 2 === 0 ? 1 : 0);
+		if ($this->displayRangeStart < 1) {
+			$this->displayRangeEnd -= $this->displayRangeStart - 1;
+		}
+		if ($this->displayRangeEnd > $this->numberOfPages) {
+			$this->displayRangeStart -= $this->displayRangeEnd - $this->numberOfPages;
+		}
+		$this->displayRangeStart = (int)max($this->displayRangeStart, 1);
+		$this->displayRangeEnd = (int)min($this->displayRangeEnd, $this->numberOfPages);
+	}
+
+	/**
+	 * Returns an array with the keys "pages", "current", "numberOfPages",
+	 * "nextPage" & "previousPage"
 	 *
 	 * @return array
 	 */
@@ -181,27 +166,38 @@ class PaginateController extends \TYPO3\CMS\Fluid\Core\Widget\AbstractWidgetCont
 	}
 
 	/**
-	 * If a certain number of links should be displayed, adjust before and after
-	 * amounts accordingly.
+	 * @param int $itemsPerPage
+	 * @param int $offset
 	 *
-	 * @return void
+	 * @return array|QueryResultInterface
+	 * @throws \InvalidArgumentException
 	 */
-	protected function calculateDisplayRange()
+	protected function prepareObjectsSlice($itemsPerPage, $offset)
 	{
-		$maximumNumberOfLinks = $this->maximumNumberOfLinks;
-		if ($maximumNumberOfLinks > $this->numberOfPages) {
-			$maximumNumberOfLinks = $this->numberOfPages;
+		if ($this->objects instanceof QueryResultInterface) {
+			$query = $this->objects->getQuery();
+			$query->setLimit($itemsPerPage);
+			if ($offset > 0) {
+				$query->setOffset($offset);
+			}
+			$modifiedObjects = $query->execute();
+			return $modifiedObjects;
+		} elseif ($this->objects instanceof ObjectStorage) {
+			$modifiedObjects = [];
+			$objectArray = $this->objects->toArray();
+			$endOfRange = min($offset + $itemsPerPage, count($objectArray));
+			for ($i = $offset; $i < $endOfRange; $i++) {
+				$modifiedObjects[] = $objectArray[$i];
+			}
+			return $modifiedObjects;
+		} elseif (is_array($this->objects)) {
+			$modifiedObjects = array_slice($this->objects, $offset, $itemsPerPage);
+			return $modifiedObjects;
+		} else {
+			throw new \InvalidArgumentException('The view helper "' . get_class($this)
+				. '" accepts as argument "QueryResultInterface", "\SplObjectStorage", "ObjectStorage" or an array. '
+				. 'given: ' . get_class($this->objects), 1385547291
+			);
 		}
-		$delta = floor($maximumNumberOfLinks / 2);
-		$this->displayRangeStart = $this->currentPage - $delta;
-		$this->displayRangeEnd = $this->currentPage + $delta - ($maximumNumberOfLinks % 2 === 0 ? 1 : 0);
-		if ($this->displayRangeStart < 1) {
-			$this->displayRangeEnd -= $this->displayRangeStart - 1;
-		}
-		if ($this->displayRangeEnd > $this->numberOfPages) {
-			$this->displayRangeStart -= $this->displayRangeEnd - $this->numberOfPages;
-		}
-		$this->displayRangeStart = (integer)max($this->displayRangeStart, 1);
-		$this->displayRangeEnd = (integer)min($this->displayRangeEnd, $this->numberOfPages);
 	}
 }

@@ -74,6 +74,53 @@ class NotificationRepository extends \TYPO3\CMS\Extbase\Persistence\Repository {
 
 	}
 
+
+	public function findOnlyNotificationsAssignedToUsersUserGroup(){
+
+		/**
+		 * @var $notification \PeterBenke\PbNotifications\Domain\Model\Notification
+		 * @var $notificationsReturn \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\PeterBenke\PbNotifications\Domain\Model\Notification>
+		 */
+
+		// All notifications
+		$notifications = $this->findAll();
+
+		// Backend user groups of the current user
+		// $beUserGroups = $GLOBALS['BE_USER']->userGroups;
+		$beUserGroups = array();
+		foreach($GLOBALS['BE_USER']->userGroups as $key => $value){
+			$beUserGroups[] = $key;
+		}
+
+
+		// Create object storage
+		$notificationsReturn = $this->objectManager->get('TYPO3\\CMS\\Extbase\\Persistence\\ObjectStorage');
+
+		// Loop through all notifications
+		foreach($notifications as $notification){
+
+			// Get the backend user groups assigned to this notification
+			$notificationUserGroups = \TYPO3\CMS\Core\Utility\GeneralUtility::intExplode(',', $notification->getBeGroups());
+
+			// If at least one group matches or the notification has no backend groups assigned or the user is admin
+			if (
+				count(array_intersect($notificationUserGroups, $beUserGroups)) > 0
+				||
+				empty($notification->getBeGroups())
+				||
+				$GLOBALS['BE_USER']->isAdmin()
+			){
+				$notificationsReturn->attach($notification);
+			}
+
+		}
+
+		return $notificationsReturn;
+
+
+	}
+
+
 	public function findOnlyUnreadNotifications(array $ordering = ['type' => \TYPO3\CMS\Extbase\Persistence\QueryInterface::ORDER_DESCENDING, 'date' => \TYPO3\CMS\Extbase\Persistence\QueryInterface::ORDER_DESCENDING]){
 
 		/**

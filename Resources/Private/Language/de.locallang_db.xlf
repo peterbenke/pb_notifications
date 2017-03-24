@@ -27,6 +27,9 @@
 			<trans-unit id="tx_pbnotifications_domain_model_notification.type">
 				<target>Typ</target>
 			</trans-unit>
+			<trans-unit id="tx_pbnotifications_domain_model_notification.be_groups">
+				<source>Backend Benutzergruppen (leer lassen für alle Benutzer)</source>
+			</trans-unit>
 			<trans-unit id="tx_pbnotifications_domain_model_notification.marked_as_read">
 				<target>Markiert als gelesen</target>
 			</trans-unit>

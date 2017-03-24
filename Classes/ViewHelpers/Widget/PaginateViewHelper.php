@@ -28,6 +28,11 @@ namespace PeterBenke\PbNotifications\ViewHelpers\Widget;
  * </code>
  *
  */
+
+use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
+use TYPO3\CMS\Extbase\Persistence\QueryResultInterface;
+use TYPO3\CMS\Fluid\Core\Widget\AbstractWidgetViewHelper;
+
 class PaginateViewHelper extends \TYPO3\CMS\Fluid\Core\Widget\AbstractWidgetViewHelper{
 
 	/**
@@ -49,7 +54,7 @@ class PaginateViewHelper extends \TYPO3\CMS\Fluid\Core\Widget\AbstractWidgetView
 	/**
 	 * Render everything
 	 *
-	 * @param \TYPO3\CMS\Extbase\Persistence\QueryResultInterface $objects
+	 * @param QueryResultInterface|ObjectStorage|array $objects
 	 * @param string $as
 	 * @param mixed $configuration
 	 * @param array $initial
@@ -57,7 +62,7 @@ class PaginateViewHelper extends \TYPO3\CMS\Fluid\Core\Widget\AbstractWidgetView
 	 * @return string
 	 */
 	public function render(
-		\TYPO3\CMS\Extbase\Persistence\QueryResultInterface $objects,
+		$objects,
 		$as,
 		$configuration = ['itemsPerPage' => 10, 'insertAbove' => false, 'insertBelow' => true],
 		$initial = []

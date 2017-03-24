@@ -23,10 +23,10 @@ return array(
 		'iconfile' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath('pb_notifications') . 'Resources/Public/Icons/tx_pbnotifications_domain_model_notification.svg'
 	),
 	'interface' => array(
-		'showRecordFieldList' => 'sys_language_uid, l10n_parent, l10n_diffsource, hidden, date, type, title, content, images, marked_as_read',
+		'showRecordFieldList' => 'sys_language_uid, l10n_parent, l10n_diffsource, hidden, date, type, title, content, images, be_groups, marked_as_read',
 	),
 	'types' => array(
-		'1' => array('showitem' => 'sys_language_uid;;;;1-1-1, l10n_parent, l10n_diffsource, hidden;;1, date, type, title, content;;;richtext:rte_transform[mode=ts_links], images, marked_as_read, --div--;LLL:EXT:cms/locallang_ttc.xlf:tabs.access, starttime, endtime'),
+		'1' => array('showitem' => 'sys_language_uid;;;;1-1-1, l10n_parent, l10n_diffsource, hidden;;1, date, type, title, content;;;richtext:rte_transform[mode=ts_links], images, be_groups, marked_as_read, --div--;LLL:EXT:cms/locallang_ttc.xlf:tabs.access, starttime, endtime'),
 	),
 	'palettes' => array(
 		'1' => array('showitem' => ''),
@@ -185,6 +185,22 @@ return array(
 				'maxitems' => 1,
 				'eval' => 'required',
 			),
+		),
+		'be_groups' => array(
+			'exclude' => 1,
+			'label' => 'LLL:EXT:pb_notifications/Resources/Private/Language/locallang_db.xlf:tx_pbnotifications_domain_model_notification.be_groups',
+
+			'config' => array(
+				'type' => 'select',
+				'renderType' => 'selectMultipleSideBySide',
+				'foreign_table' => 'be_groups',
+				'foreign_table_where' => 'ORDER BY be_groups.title',
+				'size' => '5',
+				'maxitems' => '20',
+				'enableMultiSelectFilterTextfield' => true,
+			),
+
+
 		),
 		'marked_as_read' => array(
 			'exclude' => 1,

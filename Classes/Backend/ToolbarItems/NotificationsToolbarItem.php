@@ -110,7 +110,9 @@ class NotificationsToolbarItem implements ToolbarItemInterface{
 		$this->notificationRepository = $this->objectManager->get('PeterBenke\\PbNotifications\\Domain\\Repository\\NotificationRepository');
 
 		// All Notifications
-		$this->notifications = $this->notificationRepository->findAll();
+		// $this->notifications = $this->notificationRepository->findAll();
+		$this->notifications = $this->notificationRepository->findOnlyNotificationsAssignedToUsersUserGroup();
+
 		// Only unread notifications
 		$this->onlyUnreadNotifications = $this->notificationRepository->findOnlyUnreadNotifications();
 
