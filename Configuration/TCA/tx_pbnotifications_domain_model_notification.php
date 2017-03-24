@@ -209,6 +209,7 @@ return array(
 				'type' => 'select',
 				'renderType' => 'selectMultipleSideBySide',
 				'foreign_table' => 'be_users',
+				'foreign_table_where' => 'AND 1=1 ORDER BY username ASC',
 				'MM' => 'tx_pbnotifications_notification_backenduser_mm',
 				'size' => 10,
 				'autoSizeMax' => 30,
