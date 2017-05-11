@@ -55,8 +55,16 @@ class NotificationRepository extends \TYPO3\CMS\Extbase\Persistence\Repository {
 			$querySettings->setRespectStoragePage(false);
 
 		}
+		// jv. some magic to get all nofication in the users actual language or language = -1
+        $querySettings->setRespectSysLanguage(true);
+        $querySettings->setLanguageMode('content_fallback');
+        $uc = unserialize( $GLOBALS['BE_USER']->user['uc'] ) ;
+        $lang = \TYPO3\CMS\Backend\Utility\BackendUtility::getRecordRaw('sys_language',  'language_isocode="' . $uc['lang'] . '"' , 'uid');
+        if( is_array( $lang )) {
+            $querySettings->setLanguageUid($lang['uid']);
+        }
 
-		$this->setDefaultQuerySettings($querySettings);
+        $this->setDefaultQuerySettings($querySettings);
 
 	}
 
@@ -70,7 +78,10 @@ class NotificationRepository extends \TYPO3\CMS\Extbase\Persistence\Repository {
 		$query = $this->createQuery();
 		$query->setOrderings($ordering);
 
-		return $query->execute();
+
+        $result = $query->execute();
+
+        return $result ;
 
 	}
 
