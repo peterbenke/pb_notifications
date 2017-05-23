@@ -55,7 +55,7 @@
 				<target>OK, verstanden</target>
 			</trans-unit>
 			<trans-unit id="notifications.list.markAsUnread">
-				<target>Mark as unread</target>
+				<target>Als ungelesen markieren</target>
 			</trans-unit>
 			<trans-unit id="notifications.list.noNotifications">
 				<target>Keine Benachrichtigungen gefunden.</target>
