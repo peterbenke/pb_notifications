@@ -20,7 +20,7 @@
     "GPL-2.0+"
   ],
   "require": {
-    "typo3/cms-core": "^7.6.0"
+    "typo3/cms-core": ">=7.6.0"
   },
   "version": "1.0.0",
   "replace": {
