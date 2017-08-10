@@ -23,12 +23,6 @@
     "typo3/cms-core": ">=7.6.0 <8"
   },
   "version": "1.0.0",
-  "replace": {
-    "cs_seo": "*"
-  },
-  "suggest": {
-    "typo3-ter/realurl": "*"
-  },
   "autoload": {
     "psr-4": {
       "PeterBenke\\PbNotifications\\": "Classes"
