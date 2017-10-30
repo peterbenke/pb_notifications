@@ -9,7 +9,7 @@ class CountUnreadNotificationsViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelpe
 	 * @param $notifications \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\PeterBenke\PbNotifications\Domain\Model\Notification>
 	 * @return int
 	 */
-	protected static function render($notifications) {
+	protected static function render(\TYPO3\CMS\Extbase\Persistence\ObjectStorage $notifications) {
 
 		/**
 		 * @var $notification \PeterBenke\PbNotifications\Domain\Model\Notification

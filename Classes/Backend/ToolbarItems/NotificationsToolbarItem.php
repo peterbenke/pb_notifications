@@ -195,10 +195,15 @@ class NotificationsToolbarItem implements ToolbarItemInterface{
 		}
 
 
+		// Don't get the link running on TYPO3 8... :-(
+		// => So at the moment we do not show the link to al notifications
+		$t3Version = substr(\TYPO3\CMS\Core\Utility\VersionNumberUtility::getNumericTypo3Version(), 0, 1);
+
 		$this->standaloneView->assignMultiple([
 			'notificationListUrl' => BackendUtility::getModuleUrl('user_PbNotificationsNotifications'),
 			'onlyUnreadNotifications' => $this->onlyUnreadNotifications,
-			'maxNumberOfNotificationsInToolbar' => $maxNumberOfNotificationsInToolbar
+			'maxNumberOfNotificationsInToolbar' => $maxNumberOfNotificationsInToolbar,
+			't3Version' => $t3Version
 		]);
 
 		return $this->standaloneView->render();

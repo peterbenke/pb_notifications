@@ -54,7 +54,7 @@ class PaginateViewHelper extends \TYPO3\CMS\Fluid\Core\Widget\AbstractWidgetView
 	/**
 	 * Render everything
 	 *
-	 * @param QueryResultInterface|ObjectStorage|array $objects
+	 * @param \TYPO3\CMS\Extbase\Persistence\ObjectStorage $objects
 	 * @param string $as
 	 * @param mixed $configuration
 	 * @param array $initial

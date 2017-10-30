@@ -12,7 +12,7 @@ if (TYPO3_MODE === 'BE') {
 	// Register the backend module
 	\TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
 		'PeterBenke.' . $_EXTKEY,
-		'user',	 // Make module a submodule of 'tools'
+		'user',	 // Make module a submodule of 'user'
 		'notifications',	// Submodule key
 		'',						// Position
 		array(
@@ -56,7 +56,7 @@ if (TYPO3_MODE === 'BE') {
 		=> js-snippet will be rendered
 		=> javascript above will be executed
 		=> ajax will be called
-		=> menu will beupdated
+		=> menu will be updated
 
 	*/
 
