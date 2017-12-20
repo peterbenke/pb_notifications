@@ -18,7 +18,7 @@ class IfMarkedAsReadViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstract
 	 * @param array|null $arguments
 	 * @return bool
 	 */
-	protected static function evaluateCondition(array $arguments = null) {
+	protected static function evaluateCondition($arguments = null) {
 
 		/**
 		 * @var $beUserMarkedAsRead \TYPO3\CMS\Beuser\Domain\Model\BackendUser

@@ -59,13 +59,12 @@
 	</f:if>
 
 
-	<f:if condition="{t3Version} < 8">
+	<li class="divider"></li>
 
-		<li class="divider"></li>
-		<li id="pbnotifications_listnotifications" class="dropdown-intro typo3-module-menu-item submodule mod-pbnotifications_listnotifications" data-modulename="pbnotifications_listnotifications">
-			<a href="{notificationListUrl}" target="_blank"><span class="text-warning"><i class="fa fa-list"></i>&nbsp; <f:translate key="toolbaritem.allNotifications" /></span></a>
-		</li>
-
-	</f:if>
+	<li id="pbnotifications_listnotifications">
+		<a href="#" onclick="top.goToModule('user_PbNotificationsNotifications');">
+			<span class="text-warning"><i class="fa fa-list"></i>&nbsp; <f:translate key="toolbaritem.allNotifications" /></span>
+		</a>
+	</li>
 
 </ul>
