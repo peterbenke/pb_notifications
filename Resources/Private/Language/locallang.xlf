@@ -87,6 +87,13 @@
 				<source>Refresh</source>
 			</trans-unit>
 
+			<trans-unit id="reminder.title">
+				<source>Unread notifications</source>
+			</trans-unit>
+			<trans-unit id="reminder.message">
+				<source>You have unread notifications. Please read them before you continue.</source>
+			</trans-unit>
+
 		</body>
 	</file>
 </xliff>

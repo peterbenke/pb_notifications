@@ -16,6 +16,7 @@ This extension manages notifications for editors in the backend.
   * You can create two types of notifications (information / warning).
   * Select the backend user groups, which should see this notification (leave empty for all users)
   * Add up to 3 images to your notification to illustrate the information
+  * Configure (extension configuration), if a popup will be shown after the user logs into the backend, if he has unread notifications
 
 The editors get a list of notifications in the TYPO3 backend.
 If there are new, unread notifications, they will see a coloured icon according to that in the top-bar inside the TYPO3 backend.

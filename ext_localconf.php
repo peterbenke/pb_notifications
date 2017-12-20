@@ -7,6 +7,10 @@ if (TYPO3_MODE === 'BE') {
 	// -------------------------------------------------------------------------------------------------------------------------------------
 	$GLOBALS['TYPO3_CONF_VARS']['BE']['toolbarItems'][1481194871] = \PeterBenke\PbNotifications\Backend\ToolbarItems\NotificationsToolbarItem::class;
 
+	// Reminder after login
+	// -------------------------------------------------------------------------------------------------------------------------------------
+	$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['typo3/backend.php']['constructPostProcess']['pb_notifications'] = PeterBenke\PbNotifications\Hook\BackendHook::class . '->constructPostProcess';
+
 	// Register icons
 	// -------------------------------------------------------------------------------------------------------------------------------------
 	/** @var $iconRegistry \TYPO3\CMS\Core\Imaging\IconRegistry */

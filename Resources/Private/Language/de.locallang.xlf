@@ -87,6 +87,13 @@
 				<target state="translated">Aktualisieren</target>
 			</trans-unit>
 
+			<trans-unit id="reminder.title">
+				<target>Ungelesene Benachrichtigungen</target>
+			</trans-unit>
+			<trans-unit id="reminder.message">
+				<target>Sie haben ungelesene Benachrichtigungen. Bitte lesen Sie diese bevor Sie fortfahren.</target>
+			</trans-unit>
+
 		</body>
 	</file>
 </xliff>

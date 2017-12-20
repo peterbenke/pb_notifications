@@ -3,3 +3,6 @@ notificationsStoragePid =
 
 # cat=basic; type=int; label=Max. number of notifications in toolbar
 maxNumberOfNotificationsInToolbar =
+
+# cat=basic; type=boolean; label=Force a popup being shown, after the user logs into the backend, if he has unread notifications
+forceReminderPopUp = 0
