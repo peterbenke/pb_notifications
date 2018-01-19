@@ -73,7 +73,7 @@ class NotificationRepository extends \TYPO3\CMS\Extbase\Persistence\Repository {
 	 * @param array $ordering ordering
 	 * @return array|\TYPO3\CMS\Extbase\Persistence\QueryResultInterface
 	 */
-	public function findAll(array $ordering = ['type' => \TYPO3\CMS\Extbase\Persistence\QueryInterface::ORDER_DESCENDING, 'date' => \TYPO3\CMS\Extbase\Persistence\QueryInterface::ORDER_DESCENDING]){
+	public function findAll(array $ordering = ['date' => \TYPO3\CMS\Extbase\Persistence\QueryInterface::ORDER_DESCENDING, 'type' => \TYPO3\CMS\Extbase\Persistence\QueryInterface::ORDER_DESCENDING]){
 
 		$query = $this->createQuery();
 		$query->setOrderings($ordering);

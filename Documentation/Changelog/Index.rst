@@ -14,6 +14,7 @@ ChangeLog
 ========  ======================================================
 Version:  Changes:
 ========  ======================================================
+1.1.2     Change order in notification list
 1.1.1     Bugfix link overview
 1.1.0     Possibility to show popup after user login
 1.0.2     TYPO3 8.7 also in composer.json
