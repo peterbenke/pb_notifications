@@ -85,7 +85,10 @@ class NotificationRepository extends \TYPO3\CMS\Extbase\Persistence\Repository {
 
 	}
 
-
+	/**
+	 * Find all notifications, that are assigned to the user groups of the user
+	 * @return object|\TYPO3\CMS\Extbase\Persistence\ObjectStorage
+	 */
 	public function findOnlyNotificationsAssignedToUsersUserGroup(){
 
 		/**
@@ -128,10 +131,89 @@ class NotificationRepository extends \TYPO3\CMS\Extbase\Persistence\Repository {
 
 		return $notificationsReturn;
 
+	}
+
+	/**
+	 * Find all notifications, that are assigned to the user groups of the user and are unread
+	 * @return object|\TYPO3\CMS\Extbase\Persistence\ObjectStorage
+	 */
+	public function findOnlyUnreadNotificationsAssignedToUsersUserGroup(){
+
+		/**
+		 * @var $notification \PeterBenke\PbNotifications\Domain\Model\Notification
+		 * @var $notificationsReturn \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\PeterBenke\PbNotifications\Domain\Model\Notification>
+		 */
+
+		// All notifications
+		$notifications = $this->findAll();
+
+		// Backend user groups of the current user
+		// $beUserGroups = $GLOBALS['BE_USER']->userGroups;
+		$beUserGroups = array();
+		foreach($GLOBALS['BE_USER']->userGroups as $key => $value){
+			$beUserGroups[] = $key;
+		}
+
+		// Backend user id
+		$beUserId = $GLOBALS['BE_USER']->user['uid'];
+
+		// Create object storage
+		$notificationsReturn = $this->objectManager->get('TYPO3\\CMS\\Extbase\\Persistence\\ObjectStorage');
+
+		// Loop through all notifications
+		foreach($notifications as $notification){
+
+			// Get the backend user groups assigned to this notification
+			$notificationUserGroups = \TYPO3\CMS\Core\Utility\GeneralUtility::intExplode(',', $notification->getBeGroups());
+
+			// Get the marked as read (backend user ids, who has read the notification)
+			$markedAsReadBeUsers = $notification->getMarkedAsRead();
+			$markedAsReadArray = array();
+
+			foreach($markedAsReadBeUsers as $markedAsReadBeUser){
+				$markedAsReadArray[] = $markedAsReadBeUser->getUid();
+			}
+
+			$notificationIsRead = true;
+
+			// Notification not read yet
+			if(!in_array($beUserId, $markedAsReadArray)){
+				$notificationIsRead = false;
+			}
+
+			if (
+				(
+					// At least one group matches
+					count(array_intersect($notificationUserGroups, $beUserGroups)) > 0
+					||
+					// Notification has no backend groups assigned
+					empty($notification->getBeGroups())
+					||
+					// The user is admin
+					$GLOBALS['BE_USER']->isAdmin()
+				)
+
+				&&
+
+				(
+					// Notification is unread
+					!$notificationIsRead
+				)
+			){
+				$notificationsReturn->attach($notification);
+			}
+
+		}
+
+		return $notificationsReturn;
 
 	}
 
-
+	/**
+	 * Find all unread notifications
+	 * @param array $ordering
+	 * @return object|\TYPO3\CMS\Extbase\Persistence\ObjectStorage
+	 */
 	public function findOnlyUnreadNotifications(array $ordering = ['type' => \TYPO3\CMS\Extbase\Persistence\QueryInterface::ORDER_DESCENDING, 'date' => \TYPO3\CMS\Extbase\Persistence\QueryInterface::ORDER_DESCENDING]){
 
 		/**

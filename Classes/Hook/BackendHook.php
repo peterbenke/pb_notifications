@@ -37,7 +37,8 @@ class BackendHook{
 		$notificationRepository = $objectManager->get(\PeterBenke\PbNotifications\Domain\Repository\NotificationRepository::class);
 
 		// Only unread notifications
-		$unreadNotifications = $notificationRepository->findOnlyUnreadNotifications();
+		// $unreadNotifications = $notificationRepository->findOnlyUnreadNotifications();
+		$unreadNotifications = $notificationRepository->findOnlyUnreadNotificationsAssignedToUsersUserGroup();
 		$unreadNotifications->count();
 
 		// Extension configuration for forcing the reminder popup

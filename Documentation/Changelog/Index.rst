@@ -14,6 +14,7 @@ ChangeLog
 ========  ======================================================
 Version:  Changes:
 ========  ======================================================
+1.1.3     Bugfix condition to show the popup warning
 1.1.2     Change order in notification list
 1.1.1     Bugfix link overview
 1.1.0     Possibility to show popup after user login
