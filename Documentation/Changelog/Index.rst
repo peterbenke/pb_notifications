@@ -14,6 +14,7 @@ ChangeLog
 ========  ======================================================
 Version:  Changes:
 ========  ======================================================
+1.1.5     Enable links in notifications
 1.1.4     Bugfix condition to show the popup warning
 1.1.3     ---
 1.1.2     Change order in notification list

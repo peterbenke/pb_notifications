@@ -7,4 +7,8 @@ $(document).ready(function() {
 		});
 	}
 
+	$('.panel-body a[href^="http"]:not(a[rel^="prettyPhoto"]):not(a[href$=".zip"])').each(function(){
+		$(this).attr('target', '_blank');
+	});
+
 });

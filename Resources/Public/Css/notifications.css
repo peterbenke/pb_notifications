@@ -18,6 +18,12 @@
 .tx_pb-notifications .panel-body .images img{
 	margin-bottom:5px;
 }
+.tx_pb-notifications .panel-body a{
+	text-decoration:underline;
+}
+.tx_pb-notifications .panel-body a:hover{
+	text-decoration:none;
+}
 .tx_pb-notifications .panel-body .content{
 
 }
