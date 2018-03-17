@@ -7,5 +7,5 @@ conf.py:
   copyright: 2018
   project: Notifications
   version: 1.1
-  release: 1.1.5
+  release: 1.1.6
 ...

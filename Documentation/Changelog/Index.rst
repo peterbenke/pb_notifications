@@ -14,6 +14,7 @@ ChangeLog
 ========  ======================================================
 Version:  Changes:
 ========  ======================================================
+1.1.6     Update documentation
 1.1.5     Enable links in notifications
 1.1.4     Bugfix condition to show the popup warning
 1.1.3     ---
