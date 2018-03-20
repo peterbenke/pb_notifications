@@ -110,20 +110,42 @@ class NotificationController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCon
 
 		#$beUserGroups = $this->getBackendUserGroupsAsArray($GLOBALS['BE_USER']->user['uid']);
 		#$beUserGroups = $this->getBackendUserGroupsAsArray($GLOBALS['BE_USER']->user['uid']);
-
-
 		#print_r($GLOBALS['BE_USER']->userGroups);
-
 
 		// $notifications = $this->notificationRepository->findAll();
 		$notifications = $this->notificationRepository->findOnlyNotificationsAssignedToUsersUserGroup();
 
+		/**
+		 * @var \TYPO3\CMS\Core\Html\RteHtmlParser $rteHtmlParser
+		 * @var \PeterBenke\PbNotifications\Domain\Model\Notification $notification
+		 */
+
+		$rte = false;
+
+		// If we have an RTE, we have to clean the links
+		if(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rtehtmlarea')){
+
+			$rteHtmlParser = $this->objectManager->get('TYPO3\\CMS\\Core\\Html\\RteHtmlParser');
+			foreach ($notifications as $notification){
+				$contentWithRteLinks = $rteHtmlParser->TS_links_rte($notification->getContent());
+				$notification->setContent($contentWithRteLinks);
+			}
+			$rte = true;
+
+		}
+
+		$numericTypo3Version = \TYPO3\CMS\Core\Utility\VersionNumberUtility::getNumericTypo3Version();
+		$integerTypo3Version = \TYPO3\CMS\Core\Utility\VersionNumberUtility::convertVersionNumberToInteger($numericTypo3Version);
+
 		$this->view->assignMultiple(
 			array(
 				'notifications' => $notifications,
-				'user' => $GLOBALS['BE_USER']->user
+				'user' => $GLOBALS['BE_USER']->user,
+				'TYPO3Version' => $integerTypo3Version,
+				'RTE' => $rte
 			)
 		);
+
 	}
 
 	/**

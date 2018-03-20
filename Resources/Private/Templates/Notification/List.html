@@ -38,7 +38,16 @@
 							</f:if>
 
 							<div class="content">
-								<f:format.raw>{notification.content}</f:format.raw>
+
+								<f:if condition="{RTE}">
+									<f:then>
+										<f:format.html>{notification.content}</f:format.html>
+									</f:then>
+									<f:else>
+										<f:format.raw>{notification.content}</f:format.raw>
+									</f:else>
+								</f:if>
+
 							</div>
 
 						</div>
