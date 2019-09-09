@@ -2,7 +2,10 @@
 
 namespace PeterBenke\PbNotifications\ViewHelpers;
 
-class IfMarkedAsReadViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractConditionViewHelper {
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractConditionViewHelper;
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
+
+class IfMarkedAsReadViewHelper extends AbstractConditionViewHelper {
 
 	/**
 	 * Initialize arguments
@@ -18,7 +21,7 @@ class IfMarkedAsReadViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstract
 	 * @param array|null $arguments
 	 * @return bool
 	 */
-	protected static function evaluateCondition($arguments = null) {
+	public static function verdict(array $arguments, RenderingContextInterface $renderingContext) {
 
 		/**
 		 * @var $beUserMarkedAsRead \TYPO3\CMS\Beuser\Domain\Model\BackendUser

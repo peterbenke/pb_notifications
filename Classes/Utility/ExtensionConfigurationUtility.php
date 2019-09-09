@@ -34,15 +34,21 @@ class ExtensionConfigurationUtility{
 	 */
 	public static function getCurrentConfiguration(){
 
-		/**
-		 * @var \TYPO3\CMS\Extbase\Object\ObjectManager $objectManager
-		 * @var \TYPO3\CMS\Extensionmanager\Utility\ConfigurationUtility $configurationUtility
-		 */
-		$objectManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager');
-		$configurationUtility = $objectManager->get('TYPO3\CMS\Extensionmanager\Utility\ConfigurationUtility');
+        if (version_compare(TYPO3_version, '9.5', '<')) {
 
-		$extensionConfiguration = $configurationUtility->getCurrentConfiguration('pb_notifications');
-		return $extensionConfiguration;
+            /**
+             * @var \TYPO3\CMS\Extbase\Object\ObjectManager $objectManager
+             * @var \TYPO3\CMS\Extensionmanager\Utility\ConfigurationUtility $configurationUtility
+             */
+            $objectManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager');
+            $configurationUtility = $objectManager->get('TYPO3\CMS\Extensionmanager\Utility\ConfigurationUtility');
+
+            $extensionConfiguration = $configurationUtility->getCurrentConfiguration('pb_notifications');
+            return $extensionConfiguration;
+        } else {
+            return \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Configuration\ExtensionConfiguration::class)
+                ->get('pb_notifications');
+        }
 
 	}
 
@@ -53,7 +59,11 @@ class ExtensionConfigurationUtility{
 	public static function getNotificationsStoragePid(){
 
 		$configuration = self::getCurrentConfiguration();
-		return $configuration['notificationsStoragePid']['value'];
+        if (version_compare(TYPO3_version, '9.5', '<')) {
+            return $configuration['notificationsStoragePid']['value'];
+        } else {
+            return $configuration['notificationsStoragePid'];
+        }
 
 	}
 
@@ -64,7 +74,11 @@ class ExtensionConfigurationUtility{
 	public static function getMaxNumberOfNotificationsInToolbar(){
 
 		$configuration = self::getCurrentConfiguration();
-		return $configuration['maxNumberOfNotificationsInToolbar']['value'];
+        if (version_compare(TYPO3_version, '9.5', '<')) {
+            return $configuration['maxNumberOfNotificationsInToolbar']['value'];
+        } else {
+            return $configuration['maxNumberOfNotificationsInToolbar'];
+        }
 
 	}
 

@@ -53,7 +53,9 @@ class BackendHook{
 			'reminderMessage' => $this->translate('reminder.message'),
 		];
 
-		$backendReference->addJavascript('TYPO3.LLL.pbNotifications = ' . json_encode($labels) . ';');
+		//$backendReference->addJavascript('TYPO3.LLL.pbNotifications = ' . json_encode($labels) . ';');
+        $js = 'TYPO3.LLL.pbNotifications = ' . json_encode($labels) . ';';
+        $pageRenderer->addJsInlineCode('PbNotificationsInlineJavascript', $js, false);
 
 		$pageRenderer->loadRequireJsModule(
 			// => pb_notifications/Resources/Public/JavaScript/Reminder/Reminder.js

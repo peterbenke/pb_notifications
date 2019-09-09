@@ -33,7 +33,7 @@ use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 use TYPO3\CMS\Extbase\Persistence\QueryResultInterface;
 use TYPO3\CMS\Fluid\Core\Widget\AbstractWidgetViewHelper;
 
-class PaginateViewHelper extends \TYPO3\CMS\Fluid\Core\Widget\AbstractWidgetViewHelper{
+class PaginateViewHelper extends AbstractWidgetViewHelper{
 
 	/**
 	 * @var \PeterBenke\PbNotifications\ViewHelpers\Widget\Controller\PaginateController
@@ -49,24 +49,13 @@ class PaginateViewHelper extends \TYPO3\CMS\Fluid\Core\Widget\AbstractWidgetView
 	public function injectController(\PeterBenke\PbNotifications\ViewHelpers\Widget\Controller\PaginateController $controller)
 	{
 		$this->controller = $controller;
+        $this->registerArgument('objects', \TYPO3\CMS\Extbase\Persistence\ObjectStorage::class, 'Objects', true);
+        $this->registerArgument('as', 'string', 'as', true);
+        $this->registerArgument('configuration', 'array', 'configuration', true);
+        $this->registerArgument('initial', 'array', 'initial', false);
 	}
 
-	/**
-	 * Render everything
-	 *
-	 * @param \TYPO3\CMS\Extbase\Persistence\ObjectStorage $objects
-	 * @param string $as
-	 * @param mixed $configuration
-	 * @param array $initial
-	 * @internal param array $initial
-	 * @return string
-	 */
-	public function render(
-		$objects,
-		$as,
-		$configuration = ['itemsPerPage' => 10, 'insertAbove' => false, 'insertBelow' => true],
-		$initial = []
-	) {
+	public function render() {
 		return $this->initiateSubRequest();
 	}
 }

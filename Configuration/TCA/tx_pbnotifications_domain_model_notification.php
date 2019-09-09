@@ -20,7 +20,7 @@ return array(
 			'endtime' => 'endtime',
 		),
 		'searchFields' => 'title,content,type,marked_as_read,',
-		'iconfile' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath('pb_notifications') . 'Resources/Public/Icons/tx_pbnotifications_domain_model_notification.svg'
+		'iconfile' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('pb_notifications') . 'Resources/Public/Icons/tx_pbnotifications_domain_model_notification.svg'
 	),
 	'interface' => array(
 		'showRecordFieldList' => 'sys_language_uid, l10n_parent, l10n_diffsource, hidden, date, type, title, content, images, be_groups, marked_as_read',

@@ -2,7 +2,10 @@
 
 namespace PeterBenke\PbNotifications\ViewHelpers;
 
-class IfUnreadNotificationsExistViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractConditionViewHelper {
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractConditionViewHelper;
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
+
+class IfUnreadNotificationsExistViewHelper extends AbstractConditionViewHelper {
 
 	/**
 	 * Initialize arguments
@@ -18,7 +21,7 @@ class IfUnreadNotificationsExistViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHel
 	 * @param array|null $arguments
 	 * @return bool
 	 */
-	protected static function evaluateCondition(array $arguments = null) {
+	public static function verdict(array $arguments, RenderingContextInterface $renderingContext) {
 
 		/**
 		 * @var $notification \PeterBenke\PbNotifications\Domain\Model\Notification

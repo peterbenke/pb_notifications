@@ -28,6 +28,8 @@ namespace PeterBenke\PbNotifications\Domain\Repository;
  ***************************************************************/
 
 use \PeterBenke\PbNotifications\Utility\ExtensionConfigurationUtility;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Database\ConnectionPool;
 
 /**
  * The repository for Notifications
@@ -58,15 +60,37 @@ class NotificationRepository extends \TYPO3\CMS\Extbase\Persistence\Repository {
 		// jv. some magic to get all nofication in the users actual language or language = -1
         $querySettings->setRespectSysLanguage(true);
         $querySettings->setLanguageMode('content_fallback');
-        $uc = unserialize( $GLOBALS['BE_USER']->user['uc'] ) ;
-        $lang = \TYPO3\CMS\Backend\Utility\BackendUtility::getRecordRaw('sys_language',  'language_isocode="' . $uc['lang'] . '"' , 'uid');
-        if( is_array( $lang )) {
-            $querySettings->setLanguageUid($lang['uid']);
+        if (version_compare(TYPO3_version, '9.5', '<')) {
+            $uc = unserialize($GLOBALS['BE_USER']->user['uc']);
+        } else {
+            $uc = $GLOBALS['BE_USER']->uc;
+        }
+
+        $langUid = $this->getLanguageUidForIsoCode($uc['lang'] ?? '');
+        if( $langUid) {
+            $querySettings->setLanguageUid($langUid);
         }
 
         $this->setDefaultQuerySettings($querySettings);
 
 	}
+
+	public function getLanguageUidForIsoCode(string $isocode) : int
+    {
+        if (!$isocode) {
+            $isocode = 'en';
+        }
+        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('sys_language');
+
+        $result = $queryBuilder->select('uid')->from('sys_language')
+            ->where($queryBuilder->expr()->like('language_isocode', $queryBuilder->createNamedParameter($isocode)))
+            ->execute()
+            ->fetch();
+        if ($result && $result['uid']) {
+            return (int)($result['uid']);
+        }
+        return 0;
+    }
 
 	/**
 	 * Find all notifications (overwrite parent::findAll()
