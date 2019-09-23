@@ -11,8 +11,8 @@ define(['jquery', 'TYPO3/CMS/Backend/Modal'], function ($, Modal) {
 
         $(function () {
 			Modal.show(
-				TYPO3.LLL.pbNotifications.reminderTitle,
-				TYPO3.LLL.pbNotifications.reminderMessage,
+				TYPO3.lang['reminder.title'],
+				TYPO3.lang['reminder.message'],
 				TYPO3.Severity.warning,
 				[{
 					text: TYPO3.lang['button.ok'] || 'OK',

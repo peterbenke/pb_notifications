@@ -4,6 +4,7 @@ namespace PeterBenke\PbNotifications\Hook;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Backend\Controller\BackendController;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
+use TYPO3\CMS\Core\Page\PageRenderer;
 
 /**
  * Class BackendHook
@@ -53,9 +54,11 @@ class BackendHook{
 			'reminderMessage' => $this->translate('reminder.message'),
 		];
 
-		//$backendReference->addJavascript('TYPO3.LLL.pbNotifications = ' . json_encode($labels) . ';');
-        $js = 'TYPO3.LLL.pbNotifications = ' . json_encode($labels) . ';';
-        $pageRenderer->addJsInlineCode('PbNotificationsInlineJavascript', $js, false);
+		// for TYPO3 9:
+        // https://docs.typo3.org/c/typo3/cms-core/master/en-us/Changelog/9.0/Breaking-83161-RemoveTYPO3LLLUsagesInTYPO3Core.html
+        $pageRenderer = GeneralUtility::makeInstance(PageRenderer::class);
+        $pageRenderer->addInlineLanguageLabelFile('EXT:pb_notifications/Resources/Private/Language/locallang.xlf');
+
 
 		$pageRenderer->loadRequireJsModule(
 			// => pb_notifications/Resources/Public/JavaScript/Reminder/Reminder.js
