@@ -1,14 +1,39 @@
 <?php
-
 namespace PeterBenke\PbNotifications\ViewHelpers;
 
-class IfUnreadNotificationsExistViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractConditionViewHelper {
+/**
+ * PbNotifications
+ */
+use PeterBenke\PbNotifications\Domain\Model\Notification;
+
+/**
+ * TYPO3Fluid
+ */
+
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractConditionViewHelper;
+
+/**
+ * TYPO3
+ */
+use TYPO3\CMS\Beuser\Domain\Model\BackendUser;
+use TYPO3\CMS\Fluid\Core\ViewHelper\Exception;
+
+/**
+ * Class IfUnreadNotificationsExistViewHelper
+ * @package PeterBenke\PbNotifications\ViewHelpers
+ * @author Peter Benke <info@typomotor.de>
+ */
+class IfUnreadNotificationsExistViewHelper extends AbstractConditionViewHelper
+{
 
 	/**
 	 * Initialize arguments
-	 * @throws \TYPO3\CMS\Fluid\Core\ViewHelper\Exception
+	 * @throws Exception
+	 * @author Peter Benke <info@typomotor.de>
 	 */
-	public function initializeArguments(){
+	public function initializeArguments()
+	{
 		$this->registerArgument('notifications', 'object', 'Object storage of notifications');
 		parent::initializeArguments();
 	}
@@ -16,13 +41,16 @@ class IfUnreadNotificationsExistViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHel
 	/**
 	 * Evaluate
 	 * @param array|null $arguments
+	 * @param RenderingContextInterface $renderingContext
 	 * @return bool
+	 * @author Peter Benke <info@typomotor.de>
+	 * @author Sybille Peters <https://github.com/sypets>
 	 */
-	protected static function evaluateCondition(array $arguments = null) {
+	public static function verdict(array $arguments, RenderingContextInterface $renderingContext) {
 
 		/**
-		 * @var $notification \PeterBenke\PbNotifications\Domain\Model\Notification
-		 * @var $beUserMarkedAsRead \TYPO3\CMS\Beuser\Domain\Model\BackendUser
+		 * @var Notification $notification
+		 * @var BackendUser $beUserMarkedAsRead
 		 */
 
 		// Backend user id
@@ -48,7 +76,6 @@ class IfUnreadNotificationsExistViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHel
 
 			}
 		}
-
 
 		return $unreadNotificationsExist;
 

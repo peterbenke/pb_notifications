@@ -1,19 +1,60 @@
 <?php
-
 namespace PeterBenke\PbNotifications\ViewHelpers;
 
-class CountUnreadNotificationsViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper {
+/**
+ * PbNotifications
+ */
+use PeterBenke\PbNotifications\Domain\Model\Notification;
+
+/**
+ * TYPO3Fluid
+ */
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
+
+/**
+ * TYPO3
+ */
+use TYPO3\CMS\Beuser\Domain\Model\BackendUser;
+use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
+
+/**
+ * Php
+ */
+use Closure;
+
+/**
+ * Class CountUnreadNotificationsViewHelper
+ * @package PeterBenke\PbNotifications\ViewHelpers
+ * @author Peter Benke <info@typomotor.de>
+ */
+class CountUnreadNotificationsViewHelper extends AbstractViewHelper
+{
 
 	/**
-	 * Render
-	 * @param $notifications \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\PeterBenke\PbNotifications\Domain\Model\Notification>
-	 * @return int
+	 * Initialize
+	 * @author Peter Benke <info@typomotor.de>
 	 */
-	protected static function render(\TYPO3\CMS\Extbase\Persistence\ObjectStorage $notifications) {
+	public function initializeArguments()
+	{
+		$this->registerArgument('notifications', ObjectStorage::class, 'Notifications', false);
+	}
+
+	/**
+	 * @param array $arguments
+	 * @param Closure $renderChildrenClosure
+	 * @param RenderingContextInterface $renderingContext
+	 * @return int|mixed
+	 * @author Peter Benke <info@typomotor.de>
+	 * @author Sybille Peters <https://github.com/sypets>
+	 *
+	 */
+	public static function renderStatic(array $arguments, Closure $renderChildrenClosure, RenderingContextInterface $renderingContext)
+	{
 
 		/**
-		 * @var $notification \PeterBenke\PbNotifications\Domain\Model\Notification
-		 * @var $beUserMarkedAsRead \TYPO3\CMS\Beuser\Domain\Model\BackendUser
+		 * @var Notification $notification
+		 * @var BackendUser $beUserMarkedAsRead
 		 */
 
 		// Backend user id
@@ -21,8 +62,8 @@ class CountUnreadNotificationsViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelpe
 
 		$unreadNotifications = 0;
 
-		if(isset($notifications)){
-			foreach($notifications as $notification){
+		if(isset($arguments['notifications'])){
+			foreach($arguments['notifications'] as $notification){
 
 				$markedAsReadObjects = $notification->getMarkedAsRead();
 				$markedAsRead = array();
@@ -37,6 +78,7 @@ class CountUnreadNotificationsViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelpe
 				}
 
 			}
+
 		}
 
 		return $unreadNotifications;

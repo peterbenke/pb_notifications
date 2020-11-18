@@ -1,36 +1,18 @@
 <?php
 namespace PeterBenke\PbNotifications\Domain\Model;
 
-
-/***************************************************************
- *
- *  Copyright notice
- *
- *  (c) 2016 Peter Benke <info@typomotor.de>
- *
- *  All rights reserved
- *
- *  This script is part of the TYPO3 project. The TYPO3 project is
- *  free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  The GNU General Public License can be found at
- *  http://www.gnu.org/copyleft/gpl.html.
- *
- *  This script is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+/**
+ * TYPO3
+ */
+use TYPO3\CMS\Extbase\Annotation as Extbase; // Needed for validation => do not remove!
+use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 
 /**
- * Notification
+ * Class Notification
+ * @package PeterBenke\PbNotifications\Domain\Model
+ * @author Peter Benke <info@typomotor.de>
  */
-class Notification extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
+class Notification extends AbstractEntity
 {
 
 	/**
@@ -39,45 +21,35 @@ class Notification extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
 	protected $date = null;
 
     /**
-     * title
-     *
+	 * @Extbase\Validate("NotEmpty")
      * @var string
-     * @validate NotEmpty
      */
     protected $title = '';
     
     /**
-     * content
-     *
+	 * @Extbase\Validate("NotEmpty")
      * @var string
-     * @validate NotEmpty
      */
     protected $content = '';
 
 	/**
-	 * Images
 	 * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\TYPO3\CMS\Extbase\Domain\Model\FileReference>
 	 */
 	protected $images;
 
     /**
-     * type
-     *
+	 * @Extbase\Validate("NotEmpty")
      * @var int
-     * @validate NotEmpty
      */
     protected $type = 0;
 
 	/**
-	 * beGroups
-	 *
 	 * @var string
 	 */
 	protected $beGroups = '';
 
     /**
      * markedAsRead
-     *
      * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\TYPO3\CMS\Beuser\Domain\Model\BackendUser>
      */
     protected $markedAsRead = null;
@@ -96,8 +68,6 @@ class Notification extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
      * Do not modify this method!
      * It will be rewritten on each save in the extension builder
      * You may modify the constructor of this class instead
-     *
-     * @return void
      */
     protected function initStorageObjects()
     {
@@ -105,26 +75,20 @@ class Notification extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     }
 
 	/**
-	 * Gets the date
-	 *
 	 * @return \DateTime
 	 */
 	public function getDate(){
 		return $this->date;
 	}
+
 	/**
-	 * Returns the date
-	 *
 	 * @param \DateTime $date date
-	 * @return void
 	 */
 	public function setDate($date){
 		$this->date = $date;
 	}
 
     /**
-     * Returns the title
-     *
      * @return string $title
      */
     public function getTitle()
@@ -133,10 +97,7 @@ class Notification extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     }
     
     /**
-     * Sets the title
-     *
      * @param string $title
-     * @return void
      */
     public function setTitle($title)
     {
@@ -144,8 +105,6 @@ class Notification extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     }
 
     /**
-     * Returns the content
-     *
      * @return string $content
      */
     public function getContent()
@@ -154,10 +113,7 @@ class Notification extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     }
     
     /**
-     * Sets the content
-     *
      * @param string $content
-     * @return void
      */
     public function setContent($content)
     {
@@ -165,8 +121,6 @@ class Notification extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     }
 
 	/**
-	 * Returns the images
-	 *
 	 * @return \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\TYPO3\CMS\Extbase\Domain\Model\FileReference> $images
 	 */
 	public function getImages() {
@@ -174,19 +128,13 @@ class Notification extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
 	}
 
 	/**
-	 * Sets the images
-	 *
 	 * @param \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\TYPO3\CMS\Extbase\Domain\Model\FileReference> $images
-	 * @return void
 	 */
 	public function setImages($images) {
 		$this->images = $images;
 	}
 
-
 	/**
-     * Returns the type
-     *
      * @return int $type
      */
     public function getType()
@@ -195,10 +143,7 @@ class Notification extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     }
     
     /**
-     * Sets the type
-     *
      * @param int $type
-     * @return void
      */
     public function setType($type)
     {
@@ -220,10 +165,7 @@ class Notification extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
 	}
 
     /**
-     * Adds a BackendUser
-     *
      * @param \TYPO3\CMS\Beuser\Domain\Model\BackendUser $markedAsRead
-     * @return void
      */
     public function addMarkedAsRead(\TYPO3\CMS\Beuser\Domain\Model\BackendUser $markedAsRead)
     {
@@ -231,10 +173,7 @@ class Notification extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     }
     
     /**
-     * Removes a BackendUser
-     *
      * @param \TYPO3\CMS\Beuser\Domain\Model\BackendUser $markedAsReadToRemove The BackendUser to be removed
-     * @return void
      */
     public function removeMarkedAsRead(\TYPO3\CMS\Beuser\Domain\Model\BackendUser $markedAsReadToRemove)
     {
@@ -242,8 +181,6 @@ class Notification extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     }
     
     /**
-     * Returns the markedAsRead
-     *
      * @return \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\TYPO3\CMS\Beuser\Domain\Model\BackendUser> $markedAsRead
      */
     public function getMarkedAsRead()
@@ -252,10 +189,7 @@ class Notification extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     }
     
     /**
-     * Sets the markedAsRead
-     *
      * @param \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\TYPO3\CMS\Beuser\Domain\Model\BackendUser> $markedAsRead
-     * @return void
      */
     public function setMarkedAsRead(\TYPO3\CMS\Extbase\Persistence\ObjectStorage $markedAsRead)
     {

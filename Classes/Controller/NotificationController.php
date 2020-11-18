@@ -1,82 +1,96 @@
 <?php
 namespace PeterBenke\PbNotifications\Controller;
 
-
-	/***************************************************************
-	 *
-	 *  Copyright notice
-	 *
-	 *  (c) 2016 Peter Benke <info@typomotor.de>
-	 *
-	 *  All rights reserved
-	 *
-	 *  This script is part of the TYPO3 project. The TYPO3 project is
-	 *  free software; you can redistribute it and/or modify
-	 *  it under the terms of the GNU General Public License as published by
-	 *  the Free Software Foundation; either version 3 of the License, or
-	 *  (at your option) any later version.
-	 *
-	 *  The GNU General Public License can be found at
-	 *  http://www.gnu.org/copyleft/gpl.html.
-	 *
-	 *  This script is distributed in the hope that it will be useful,
-	 *  but WITHOUT ANY WARRANTY; without even the implied warranty of
-	 *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	 *  GNU General Public License for more details.
-	 *
-	 *  This copyright notice MUST APPEAR in all copies of the script!
-	 ***************************************************************/
-
-use TYPO3\CMS\Backend\Utility\BackendUtility;
+/**
+ * PbNotifications
+ */
+use PeterBenke\PbNotifications\Domain\Model\Notification;
 
 /**
- * NotificationController
+ * TYPO3
  */
-class NotificationController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController{
+use TYPO3\CMS\Backend\Utility\BackendUtility;
+use TYPO3\CMS\Beuser\Domain\Model\BackendUser;
+use TYPO3\CMS\Beuser\Domain\Repository\BackendUserRepository;
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+use TYPO3\CMS\Core\Utility\VersionNumberUtility;
+use TYPO3\CMS\Core\Html\RteHtmlParser;
+use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
+use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
+use TYPO3\CMS\Extbase\Mvc\Exception\UnsupportedRequestTypeException;
+use TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager;
+use TYPO3\CMS\Extbase\Persistence\Exception\IllegalObjectTypeException;
+use TYPO3\CMS\Extbase\Persistence\Exception\UnknownObjectException;
+
+
+/**
+ * Class NotificationController
+ * @package PeterBenke\PbNotifications\Controller
+ * @author Peter Benke <info@typomotor.de>
+ */
+class NotificationController extends ActionController
+{
 
 	/**
-	 * notificationRepository
-	 *
 	 * @var \PeterBenke\PbNotifications\Domain\Repository\NotificationRepository
-	 * @inject
 	 */
 	protected $notificationRepository = null;
 
 	/**
-	 * backendUserRepository
 	 * @var \TYPO3\CMS\Beuser\Domain\Repository\BackendUserRepository
-	 * @inject
 	 */
 	protected $backendUserRepository = null;
 
 	/**
-	 * persistManager
+	 * @param \PeterBenke\PbNotifications\Domain\Repository\NotificationRepository $notificationRepository
+	 */
+	public function injectNotificationRepository(\PeterBenke\PbNotifications\Domain\Repository\NotificationRepository $notificationRepository)
+	{
+		$this->notificationRepository = $notificationRepository;
+	}
+
+	/**
+	 * @param \TYPO3\CMS\Beuser\Domain\Repository\BackendUserRepository $backendUserRepository
+	 */
+	public function injectBackendUserRepository(\TYPO3\CMS\Beuser\Domain\Repository\BackendUserRepository $backendUserRepository)
+	{
+		$this->backendUserRepository = $backendUserRepository;
+	}
+
+	/**
 	 * @var \TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager
 	 */
 	protected $persistManager = null;
 
 
-	// =====================================================================================================================================
-	// Common functions
-	// =====================================================================================================================================
+	/**
+	 * Common functions
+	 * =================================================================================================================
+	 */
 
 	/**
-	 * initialize
+	 * Initialize
+	 * @author Peter Benke <info@typomotor.de>
 	 */
-	protected function initializeAction(){
-		$this->backendUserRepository = $this->objectManager->get('TYPO3\\CMS\\Beuser\\Domain\\Repository\\BackendUserRepository');
-		$this->persistManager = $this->objectManager->get('TYPO3\\CMS\Extbase\\Persistence\\Generic\\PersistenceManager');
+	protected function initializeAction()
+	{
+		$this->backendUserRepository = $this->objectManager->get(BackendUserRepository::class);
+		$this->persistManager = $this->objectManager->get(PersistenceManager::class);
 	}
 
 	/**
 	 * Sets the notification to read or to unread
-	 * @param $readUnread
+	 * @param string $readUnread
+	 * @throws IllegalObjectTypeException
+	 * @throws UnknownObjectException
+	 * @author Peter Benke <info@typomotor.de>
 	 */
-	private function setReadUnread($readUnread){
+	private function setReadUnread(string $readUnread)
+	{
 
 		/**
-		 * @var $notification \PeterBenke\PbNotifications\Domain\Model\Notification
-		 * @var $beUser \TYPO3\CMS\Beuser\Domain\Model\BackendUser
+		 * @var $notification Notification
+		 * @var $beUser BackendUser
 		 */
 
 		$beUserId = $GLOBALS['BE_USER']->user['uid'];
@@ -98,35 +112,39 @@ class NotificationController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCon
 
 	}
 
-	// =====================================================================================================================================
-	// Actions
-	// =====================================================================================================================================
+	/**
+	 * Actions
+	 * =================================================================================================================
+	 */
 
 	/**
 	 * Action list
 	 * @return void
+	 * @author Peter Benke <info@typomotor.de>
 	 */
-	public function listAction(){
+	public function listAction()
+	{
 
-		#$beUserGroups = $this->getBackendUserGroupsAsArray($GLOBALS['BE_USER']->user['uid']);
-		#$beUserGroups = $this->getBackendUserGroupsAsArray($GLOBALS['BE_USER']->user['uid']);
-		#print_r($GLOBALS['BE_USER']->userGroups);
+		// $beUserGroups = $this->getBackendUserGroupsAsArray($GLOBALS['BE_USER']->user['uid']);
+		// $beUserGroups = $this->getBackendUserGroupsAsArray($GLOBALS['BE_USER']->user['uid']);
+		// print_r($GLOBALS['BE_USER']->userGroups);
 
 		// $notifications = $this->notificationRepository->findAll();
 		$notifications = $this->notificationRepository->findOnlyNotificationsAssignedToUsersUserGroup();
 
 		/**
-		 * @var \TYPO3\CMS\Core\Html\RteHtmlParser $rteHtmlParser
-		 * @var \PeterBenke\PbNotifications\Domain\Model\Notification $notification
+		 * @var RteHtmlParser $rteHtmlParser
+		 * @var Notification $notification
 		 */
 
 		$rte = false;
 
 		// If we have an RTE, we have to clean the links
-		if(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('rtehtmlarea')){
+		if(ExtensionManagementUtility::isLoaded('rtehtmlarea')){
 
-			$rteHtmlParser = $this->objectManager->get('TYPO3\\CMS\\Core\\Html\\RteHtmlParser');
+			$rteHtmlParser = $this->objectManager->get(RteHtmlParser::class);
 			foreach ($notifications as $notification){
+				// Todo: deprecated (is there anyone, who uses rtehtmlarea?)
 				$contentWithRteLinks = $rteHtmlParser->TS_links_rte($notification->getContent());
 				$notification->setContent($contentWithRteLinks);
 			}
@@ -134,44 +152,52 @@ class NotificationController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionCon
 
 		}
 
-		$numericTypo3Version = \TYPO3\CMS\Core\Utility\VersionNumberUtility::getNumericTypo3Version();
-		$integerTypo3Version = \TYPO3\CMS\Core\Utility\VersionNumberUtility::convertVersionNumberToInteger($numericTypo3Version);
-
 		$this->view->assignMultiple(
-			array(
+			[
 				'notifications' => $notifications,
 				'user' => $GLOBALS['BE_USER']->user,
-				'TYPO3Version' => $integerTypo3Version,
 				'RTE' => $rte
-			)
+			]
 		);
 
 	}
 
 	/**
 	 * Action markAsRead
+	 * @throws IllegalObjectTypeException
+	 * @throws UnknownObjectException
+	 * @throws StopActionException
+	 * @throws UnsupportedRequestTypeException
+	 * @author Peter Benke <info@typomotor.de>
 	 */
-	public function markAsReadAction(){
+	public function markAsReadAction()
+	{
 		$this->setReadUnread('read');
 		$this->redirect('list');
 	}
 
 	/**
 	 * Action markAsUnread
+	 * @throws IllegalObjectTypeException
+	 * @throws StopActionException
+	 * @throws UnknownObjectException
+	 * @throws UnsupportedRequestTypeException
+	 * @author Peter Benke <info@typomotor.de>
 	 */
-	public function markAsUnreadAction(){
+	public function markAsUnreadAction()
+	{
 		$this->setReadUnread('unread');
 		$this->redirect('list');
 	}
 
 	/**
 	 * Action show
-	 * @param \PeterBenke\PbNotifications\Domain\Model\Notification $notification
-	 * @return void
+	 * @param Notification $notification
+	 * @author Peter Benke <info@typomotor.de>
 	 */
-	public function showAction(\PeterBenke\PbNotifications\Domain\Model\Notification $notification){
+	public function showAction(Notification $notification)
+	{
 		$this->view->assign('notification', $notification);
 	}
-
 
 }

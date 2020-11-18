@@ -14,6 +14,8 @@ ChangeLog
 ========  ======================================================
 Version:  Changes:
 ========  ======================================================
+2.0.0     Compatibility to TYPO3 9, thanks to Sybille Peters (https://github.com/sypets)
+--------  ------------------------------------------------------
 1.1.7     Enable links also, if RTE is installed
 --------  ------------------------------------------------------
 1.1.6     Update documentation

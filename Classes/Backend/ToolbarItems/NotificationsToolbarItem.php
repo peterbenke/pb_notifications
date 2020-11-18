@@ -1,52 +1,44 @@
 <?php
 namespace PeterBenke\PbNotifications\Backend\ToolbarItems;
 
-/***************************************************************
- *
- *  Copyright notice
- *
- *  (c) 2016 Peter Benke <info@typomotor.de>
- *
- *  All rights reserved
- *
- *  This script is part of the TYPO3 project. The TYPO3 project is
- *  free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  The GNU General Public License can be found at
- *  http://www.gnu.org/copyleft/gpl.html.
- *
- *  This script is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
-
+/**
+ * PbNotifications
+ */
+use PeterBenke\PbNotifications\Domain\Repository\NotificationRepository;
 use PeterBenke\PbNotifications\Utility\ExtensionConfigurationUtility;
 
+/**
+ * TYPO3
+ */
+use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Backend\Toolbar\ToolbarItemInterface;
-use TYPO3\CMS\Backend\Utility\BackendUtility;
-
+use TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException;
+use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Imaging\IconFactory;
 use TYPO3\CMS\Core\Page\PageRenderer;
+use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+use TYPO3\CMS\Core\Utility\VersionNumberUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-
+use TYPO3\CMS\Extbase\Mvc\Exception\InvalidExtensionNameException;
+use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Fluid\View\StandaloneView;
-
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
-
+use TYPO3\CMS\Lang\LanguageService;
 
 /**
- * A list of all notifications
- *
+ * Psr
  */
-class NotificationsToolbarItem implements ToolbarItemInterface{
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Log\LoggerAwareInterface;
+
+/**
+ * Class NotificationsToolbarItem
+ * @package PeterBenke\PbNotifications\Backend\ToolbarItems
+ * @author Peter Benke <info@typomotor.de>
+ */
+class NotificationsToolbarItem implements ToolbarItemInterface
+{
 
 	/**
 	 * @var StandaloneView
@@ -85,11 +77,11 @@ class NotificationsToolbarItem implements ToolbarItemInterface{
 	 */
 	protected $onlyUnreadNotifications;
 
-
 	/**
-	 * NotificationsToolbarItem constructor
+	 * @author Peter Benke <info@typomotor.de>
 	 */
-	public function __construct(){
+	public function __construct()
+	{
 
 		$this->extPath = ExtensionManagementUtility::extPath('pb_notifications');
 
@@ -106,8 +98,8 @@ class NotificationsToolbarItem implements ToolbarItemInterface{
 		$this->getLanguageService()->includeLLFile('EXT:pb_notifications/Resources/Private/Language/locallang.xlf');
 
 		// Repository
-		$this->objectManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager');
-		$this->notificationRepository = $this->objectManager->get('PeterBenke\\PbNotifications\\Domain\\Repository\\NotificationRepository');
+		$this->objectManager = GeneralUtility::makeInstance(ObjectManager::class);
+		$this->notificationRepository = $this->objectManager->get(NotificationRepository::class);
 
 		// All Notifications
 		// $this->notifications = $this->notificationRepository->findAll();
@@ -120,16 +112,17 @@ class NotificationsToolbarItem implements ToolbarItemInterface{
 
 	/**
 	 * Checks whether the user has access to this toolbar item
-	 *
 	 * @return bool TRUE if user has access, FALSE if not
+	 * @author Peter Benke <info@typomotor.de>
 	 */
-	public function checkAccess(){
+	public function checkAccess()
+	{
 
 		$beUser = $this->getBackendUser();
 		if (
 			$beUser->isAdmin()
 			||
-			\TYPO3\CMS\Core\Utility\GeneralUtility::inList($beUser->groupData['modules'], 'user_PbNotificationsNotifications')
+			GeneralUtility::inList($beUser->groupData['modules'], 'user_PbNotificationsNotifications')
 		) {
 			return true;
 		}
@@ -141,10 +134,11 @@ class NotificationsToolbarItem implements ToolbarItemInterface{
 
 	/**
 	 * Render toolbar icon
-	 *
-	 * @return string HTML
+	 * @return string
+	 * @author Peter Benke <info@typomotor.de>
 	 */
-	public function getItem(){
+	public function getItem()
+	{
 
 		if (!$this->checkAccess()) {
 			return '';
@@ -152,8 +146,12 @@ class NotificationsToolbarItem implements ToolbarItemInterface{
 
 		$this->standaloneView->setTemplatePathAndFilename($this->extPath . 'Resources/Private/Templates/ToolbarMenu/MenuItem.html');
 
-		$request = $this->standaloneView->getRequest();
-		$request->setControllerExtensionName('pb_notifications');
+		try{
+			$request = $this->standaloneView->getRequest();
+			$request->setControllerExtensionName('pb_notifications');
+		}catch(InvalidExtensionNameException $e){
+			return $e->getMessage();
+		}
 
 		$this->standaloneView->assign('notifications', $this->notifications);
 		$this->standaloneView->assignMultiple([
@@ -166,19 +164,21 @@ class NotificationsToolbarItem implements ToolbarItemInterface{
 
 	/**
 	 * This item has no drop down
-	 *
 	 * @return bool
+	 * @author Peter Benke <info@typomotor.de>
 	 */
-	public function hasDropDown(){
+	public function hasDropDown()
+	{
 		return true;
 	}
 
 	/**
 	 * Get the drop down menu
-	 *
-	 * @return string HTML
+	 * @return string
+	 * @author Peter Benke <info@typomotor.de>
 	 */
-	public function getDropDown(){
+	public function getDropDown()
+	{
 
 		if (!$this->checkAccess()) {
 			return '';
@@ -186,24 +186,34 @@ class NotificationsToolbarItem implements ToolbarItemInterface{
 
 		$this->standaloneView->setTemplatePathAndFilename($this->extPath . 'Resources/Private/Templates/ToolbarMenu/DropDown.html');
 
-		$request = $this->standaloneView->getRequest();
-		$request->setControllerExtensionName('pb_notifications');
+		try{
+			$request = $this->standaloneView->getRequest();
+			$request->setControllerExtensionName('pb_notifications');
+		}catch(InvalidExtensionNameException $e){
+			return $e->getMessage();
+		}
 
 		$maxNumberOfNotificationsInToolbar = ExtensionConfigurationUtility::getMaxNumberOfNotificationsInToolbar();
 		if(!intval($maxNumberOfNotificationsInToolbar) > 0){
 			$maxNumberOfNotificationsInToolbar = 1000;
 		}
 
-
-		// Don't get the link running on TYPO3 8... :-(
-		// => So at the moment we do not show the link to al notifications
-		$t3Version = substr(\TYPO3\CMS\Core\Utility\VersionNumberUtility::getNumericTypo3Version(), 0, 1);
+		/** @var UriBuilder $uriBuilder */
+		/*
+		$notificationListUrl = null;
+		try{
+			$uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
+			$notificationListUrl = $uriBuilder->buildUriFromRoute('user_PbNotificationsNotifications');
+		}catch(RouteNotFoundException $e){
+			return $e->getMessage();
+		}
+		*/
 
 		$this->standaloneView->assignMultiple([
-			'notificationListUrl' => BackendUtility::getModuleUrl('user_PbNotificationsNotifications'),
+//			't3Version' => substr(VersionNumberUtility::getNumericTypo3Version(), 0, 1)
+//			'notificationListUrl' => $notificationListUrl,
 			'onlyUnreadNotifications' => $this->onlyUnreadNotifications,
 			'maxNumberOfNotificationsInToolbar' => $maxNumberOfNotificationsInToolbar,
-			't3Version' => $t3Version
 		]);
 
 		return $this->standaloneView->render();
@@ -212,39 +222,44 @@ class NotificationsToolbarItem implements ToolbarItemInterface{
 
 	/**
 	 * No additional attributes
-	 *
-	 * @return string List item HTML attibutes
+	 * @return array List item HTML attributes
+	 * @author Peter Benke <info@typomotor.de>
 	 */
-	public function getAdditionalAttributes(){
+	public function getAdditionalAttributes()
+	{
 		return [];
 	}
 
 	/**
 	 * Position relative to others
-	 *
 	 * @return int
+	 * @author Peter Benke <info@typomotor.de>
 	 */
-	public function getIndex(){
+	public function getIndex()
+	{
 		return 30;
 	}
 
+	/**
+	 * Other functions (not obliged in Interface)
+	 * =================================================================================================================
+	 */
 
-	// =====================================================================================================================================
-	// Other functions (not obliged in Interface)
-	// =====================================================================================================================================
-
-	// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-	// Ajax
-	// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+	/**
+	 * Ajax
+	 * = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+	 */
 
 	/**
 	 * Renders the menuItem as ajax call
-	 *
 	 * @param ServerRequestInterface $request
 	 * @param ResponseInterface $response
 	 * @return ResponseInterface
+	 * @author Peter Benke <info@typomotor.de>
 	 */
-	public function renderMenuItem(ServerRequestInterface $request, ResponseInterface $response){
+	public function renderMenuItem(ServerRequestInterface $request, ResponseInterface $response)
+	{
+		unset($request); // Avoid IDE warning
 		$response->getBody()->write($this->getItem());
 		$response = $response->withHeader('Content-Type', 'text/html; charset=utf-8');
 		return $response;
@@ -253,30 +268,34 @@ class NotificationsToolbarItem implements ToolbarItemInterface{
 
 	/**
 	 * Renders the menu as ajax call
-	 *
 	 * @param ServerRequestInterface $request
 	 * @param ResponseInterface $response
 	 * @return ResponseInterface
+	 * @author Peter Benke <info@typomotor.de>
 	 */
-	public function renderMenu(ServerRequestInterface $request, ResponseInterface $response){
+	public function renderMenu(ServerRequestInterface $request, ResponseInterface $response)
+	{
+		unset($request); // Avoid IDE warning
 		$response->getBody()->write($this->getDropDown());
 		$response = $response->withHeader('Content-Type', 'text/html; charset=utf-8');
 		return $response;
 	}
 
-
-	// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-	// Hooks
-	// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+	/**
+	 * Hooks
+	 * = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+	 */
 
 	/**
 	 * Called as a hook in \TYPO3\CMS\Backend\Utility\BackendUtility::setUpdateSignal (NotificationController)
 	 * Updates the notification menu
-	 *
 	 * @param array $params
 	 * @param $ref
+	 * @author Peter Benke <info@typomotor.de>
 	 */
-	public function updateMenuHook(&$params, $ref){
+	public function updateMenuHook(array &$params, $ref)
+	{
+		unset($ref); // Avoid IDE warning
 		$params['JScode'] = '
 			if (top && top.TYPO3.PbNotificationsMenu) {
 				top.TYPO3.PbNotificationsMenu.updateMenu();
@@ -284,36 +303,38 @@ class NotificationsToolbarItem implements ToolbarItemInterface{
 		';
 	}
 
-
-	// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-	// Miscellaneous
-	// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+	/**
+	 * Miscellaneous
+	 * = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+	 *
 
 	/**
-	 * Returns the current BE user.
-	 *
-	 * @return \TYPO3\CMS\Core\Authentication\BackendUserAuthentication
+	 * Returns the current BE user
+	 * @return BackendUserAuthentication
+	 * @author Peter Benke <info@typomotor.de>
 	 */
-	protected function getBackendUser()	{
+	protected function getBackendUser()
+	{
 		return $GLOBALS['BE_USER'];
 	}
 
 	/**
 	 * Returns LanguageService
-	 *
-	 * @return \TYPO3\CMS\Lang\LanguageService
+	 * @return LanguageService
+	 * @author Peter Benke <info@typomotor.de>
 	 */
-	protected function getLanguageService() {
+	protected function getLanguageService()
+	{
 		return $GLOBALS['LANG'];
 	}
 
-
 	/**
 	 * Returns current PageRenderer
-	 *
-	 * @return \TYPO3\CMS\Core\Page\PageRenderer
+	 * @return PageRenderer|LoggerAwareInterface|SingletonInterface
+	 * @author Peter Benke <info@typomotor.de>
 	 */
-	protected function getPageRenderer(){
+	protected function getPageRenderer()
+	{
 		return GeneralUtility::makeInstance(PageRenderer::class);
 	}
 

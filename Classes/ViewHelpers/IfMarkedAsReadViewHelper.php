@@ -1,14 +1,34 @@
 <?php
-
 namespace PeterBenke\PbNotifications\ViewHelpers;
 
-class IfMarkedAsReadViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractConditionViewHelper {
+/**
+ * TYPO3Fluid
+ */
+
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractConditionViewHelper;
+
+/**
+ * TYPO3
+ */
+use TYPO3\CMS\Beuser\Domain\Model\BackendUser;
+use TYPO3\CMS\Fluid\Core\ViewHelper\Exception;
+
+/**
+ * Class IfMarkedAsReadViewHelper
+ * @package PeterBenke\PbNotifications\ViewHelpers
+ * @author Peter Benke <info@typomotor.de>
+ */
+class IfMarkedAsReadViewHelper extends AbstractConditionViewHelper
+{
 
 	/**
 	 * Initialize arguments
-	 * @throws \TYPO3\CMS\Fluid\Core\ViewHelper\Exception
+	 * @throws Exception
+	 * @author Peter Benke <info@typomotor.de>
 	 */
-	public function initializeArguments(){
+	public function initializeArguments()
+	{
 		$this->registerArgument('markedAsRead', 'object', 'Object storage of backend users, who has read this notification');
 		parent::initializeArguments();
 	}
@@ -16,18 +36,21 @@ class IfMarkedAsReadViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstract
 	/**
 	 * Evaluate
 	 * @param array|null $arguments
+	 * @param RenderingContextInterface $renderingContext
 	 * @return bool
+	 * @author Peter Benke <info@typomotor.de>
+	 * @author Sybille Peters <https://github.com/sypets>
 	 */
-	protected static function evaluateCondition($arguments = null) {
+	public static function verdict(array $arguments, RenderingContextInterface $renderingContext) {
 
 		/**
-		 * @var $beUserMarkedAsRead \TYPO3\CMS\Beuser\Domain\Model\BackendUser
+		 * @var BackendUser $beUserMarkedAsRead
 		 */
 
 		// Backend user id
 		$beUserId = $GLOBALS['BE_USER']->user['uid'];
 
-		$markedAsRead = array();
+		$markedAsRead = [];
 		if(isset($arguments['markedAsRead'])){
 			foreach($arguments['markedAsRead'] as $beUserMarkedAsRead){
 				$markedAsRead[] = $beUserMarkedAsRead->getUid();

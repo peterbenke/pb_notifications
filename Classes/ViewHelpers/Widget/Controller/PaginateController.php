@@ -2,23 +2,18 @@
 
 namespace PeterBenke\PbNotifications\ViewHelpers\Widget\Controller;
 
-	/**
-	 * This file is part of the TYPO3 CMS project.
-	 *
-	 * It is free software; you can redistribute it and/or modify it under
-	 * the terms of the GNU General Public License, either version 2
-	 * of the License, or any later version.
-	 *
-	 * For the full copyright and license information, please read the
-	 * LICENSE.txt file that was distributed with this source code.
-	 *
-	 * The TYPO3 project - inspiring people to share!
-	 */
-
+/**
+ * TYPO3
+ */
 use TYPO3\CMS\Core\Utility\ArrayUtility;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 use TYPO3\CMS\Extbase\Persistence\QueryResultInterface;
 use TYPO3\CMS\Fluid\Core\Widget\AbstractWidgetController;
+
+/**
+ * Php
+ */
+use InvalidArgumentException;
 
 /**
  * Class PaginateController
@@ -68,7 +63,7 @@ class PaginateController extends AbstractWidgetController
 	protected $displayRangeEnd = null;
 
 	/**
-	 * @return void
+	 * Initialize
 	 */
 	public function initializeAction()
 	{
@@ -81,7 +76,6 @@ class PaginateController extends AbstractWidgetController
 
 	/**
 	 * @param int $currentPage
-	 * @return void
 	 */
 	public function indexAction($currentPage = 1)
 	{
@@ -110,10 +104,7 @@ class PaginateController extends AbstractWidgetController
 	}
 
 	/**
-	 * If a certain number of links should be displayed, adjust before and after
-	 * amounts accordingly.
-	 *
-	 * @return void
+	 * If a certain number of links should be displayed, adjust before and after amounts accordingly
 	 */
 	protected function calculateDisplayRange()
 	{
@@ -135,9 +126,7 @@ class PaginateController extends AbstractWidgetController
 	}
 
 	/**
-	 * Returns an array with the keys "pages", "current", "numberOfPages",
-	 * "nextPage" & "previousPage"
-	 *
+	 * Returns an array with the keys "pages", "current", "numberOfPages", "nextPage" & "previousPage"
 	 * @return array
 	 */
 	protected function buildPagination()
@@ -168,9 +157,8 @@ class PaginateController extends AbstractWidgetController
 	/**
 	 * @param int $itemsPerPage
 	 * @param int $offset
-	 *
 	 * @return array|QueryResultInterface
-	 * @throws \InvalidArgumentException
+	 * @throws InvalidArgumentException
 	 */
 	protected function prepareObjectsSlice($itemsPerPage, $offset)
 	{
@@ -194,7 +182,7 @@ class PaginateController extends AbstractWidgetController
 			$modifiedObjects = array_slice($this->objects, $offset, $itemsPerPage);
 			return $modifiedObjects;
 		} else {
-			throw new \InvalidArgumentException('The view helper "' . get_class($this)
+			throw new InvalidArgumentException('The view helper "' . get_class($this)
 				. '" accepts as argument "QueryResultInterface", "\SplObjectStorage", "ObjectStorage" or an array. '
 				. 'given: ' . get_class($this->objects), 1385547291
 			);

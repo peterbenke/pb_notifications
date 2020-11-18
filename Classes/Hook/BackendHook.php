@@ -1,19 +1,30 @@
 <?php
 namespace PeterBenke\PbNotifications\Hook;
 
-use TYPO3\CMS\Core\Utility\GeneralUtility;
+/**
+ * PbNotifications
+ */
+use PeterBenke\PbNotifications\Domain\Repository\NotificationRepository;
+use PeterBenke\PbNotifications\Utility\ExtensionConfigurationUtility;
+
+/**
+ * TYPO3
+ */
 use TYPO3\CMS\Backend\Controller\BackendController;
-use TYPO3\CMS\Core\DataHandling\DataHandler;
+use TYPO3\CMS\Core\Page\PageRenderer;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Object\ObjectManager;
 
 /**
  * Class BackendHook
+ * @package PeterBenke\PbNotifications\Hook
  * @author Peter Benke <info@typomotor.de>
  */
-class BackendHook{
+class BackendHook
+{
 
 	/**
-	 * reference back to the backend
-	 *
+	 * Reference back to the backend
 	 * @var \TYPO3\CMS\Backend\Controller\BackendController
 	 */
 	protected $backendReference;
@@ -21,40 +32,36 @@ class BackendHook{
 	/**
 	 * Show the reminder after login
 	 * @param array $config
-	 * @param \TYPO3\CMS\Backend\Controller\BackendController $backendReference
+	 * @param BackendController $backendReference
+	 * @author Peter Benke <info@typomotor.de>
+	 * @author Sybille Peters <https://github.com/sypets>
 	 */
-	public function constructPostProcess(array $config, BackendController &$backendReference) {
+	public function constructPostProcess(array $config, BackendController &$backendReference)
+	{
 
 		/**
-		 * @var \TYPO3\CMS\Extbase\Object\ObjectManager $objectManager
-		 * @var \TYPO3\CMS\Core\Page\PageRenderer $pageRenderer
-		 * @var \PeterBenke\PbNotifications\Domain\Repository\NotificationRepository $notificationRepository
+		 * @var ObjectManager $objectManager
+		 * @var PageRenderer $pageRenderer
+		 * @var NotificationRepository $notificationRepository
 		 */
 
 		// Create objects
-		$objectManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Extbase\Object\ObjectManager::class);
-		$pageRenderer = $objectManager->get(\TYPO3\CMS\Core\Page\PageRenderer::class);
-		$notificationRepository = $objectManager->get(\PeterBenke\PbNotifications\Domain\Repository\NotificationRepository::class);
+		$objectManager = GeneralUtility::makeInstance(ObjectManager::class);
+		$pageRenderer = $objectManager->get(PageRenderer::class);
+		$notificationRepository = $objectManager->get(NotificationRepository::class);
 
 		// Only unread notifications
 		// $unreadNotifications = $notificationRepository->findOnlyUnreadNotifications();
 		$unreadNotifications = $notificationRepository->findOnlyUnreadNotificationsAssignedToUsersUserGroup();
 		$unreadNotifications->count();
 
-		// Extension configuration for forcing the reminder popup
-		$extConf = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['pb_notifications']);
-
-		if($unreadNotifications->count() === 0 || $extConf['forceReminderPopUp'] == '0'){
+		// We do not need to show a popup to the user after login
+		if($unreadNotifications->count() === 0 || !ExtensionConfigurationUtility::forcePopupAfterLogin()){
 			return;
 		}
 
-		$labels = [
-			'reminderTitle' => $this->translate('reminder.title'),
-			'reminderMessage' => $this->translate('reminder.message'),
-		];
-
-		$backendReference->addJavascript('TYPO3.LLL.pbNotifications = ' . json_encode($labels) . ';');
-
+		$pageRenderer = GeneralUtility::makeInstance(PageRenderer::class);
+		$pageRenderer->addInlineLanguageLabelFile('EXT:pb_notifications/Resources/Private/Language/locallang.xlf');
 		$pageRenderer->loadRequireJsModule(
 			// => pb_notifications/Resources/Public/JavaScript/Reminder/Reminder.js
 			'TYPO3/CMS/PbNotifications/Reminder/Reminder',
@@ -62,17 +69,6 @@ class BackendHook{
                 reminder.initModal(true);
             }'
 		);
-
-	}
-
-
-	/**
-	 * @param string $key
-	 * @return null|string
-	 */
-	protected function translate($key){
-
-		return \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($key, 'pb_notifications');
 
 	}
 

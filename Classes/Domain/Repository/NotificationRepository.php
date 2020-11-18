@@ -1,68 +1,64 @@
 <?php
 namespace PeterBenke\PbNotifications\Domain\Repository;
 
-
-/***************************************************************
- *
- *  Copyright notice
- *
- *  (c) 2016 Peter Benke <info@typomotor.de>
- *
- *  All rights reserved
- *
- *  This script is part of the TYPO3 project. The TYPO3 project is
- *  free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  The GNU General Public License can be found at
- *  http://www.gnu.org/copyleft/gpl.html.
- *
- *  This script is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
-
-use \PeterBenke\PbNotifications\Utility\ExtensionConfigurationUtility;
+/**
+ * PbNotifications
+ */
+use PeterBenke\PbNotifications\Domain\Model\Notification;
+use PeterBenke\PbNotifications\Utility\ExtensionConfigurationUtility;
 
 /**
- * The repository for Notifications
+ * TYPO3
  */
-class NotificationRepository extends \TYPO3\CMS\Extbase\Persistence\Repository {
+use TYPO3\CMS\Backend\Utility\BackendUtility;
+use TYPO3\CMS\Beuser\Domain\Model\BackendUser;
+use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Persistence\Generic\Typo3QuerySettings;
+use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
+use TYPO3\CMS\Extbase\Persistence\QueryInterface;
+use TYPO3\CMS\Extbase\Persistence\QueryResultInterface;
+use TYPO3\CMS\Extbase\Persistence\Repository;
+
+/**
+ * Class NotificationRepository
+ * @package PeterBenke\PbNotifications\Domain\Repository
+ * @author Peter Benke <info@typomotor.de>
+ */
+class NotificationRepository extends Repository
+{
 
 	/**
-	 * initialize
+	 * Initialize
+	 * @author Peter Benke <info@typomotor.de>
 	 */
-	public function initializeObject() {
+	public function initializeObject()
+	{
 
-		/** @var $querySettings \TYPO3\CMS\Extbase\Persistence\Generic\Typo3QuerySettings */
-		$querySettings = $this->objectManager->get('TYPO3\\CMS\\Extbase\\Persistence\\Generic\\Typo3QuerySettings');
-
+		/** @var Typo3QuerySettings $querySettings */
+		$querySettings = $this->objectManager->get(Typo3QuerySettings::class);
 		$notificationsStoragePid = ExtensionConfigurationUtility::getNotificationsStoragePid();
 
 		// If storage pid is set
 		if(intval($notificationsStoragePid) > 0){
-
 			$querySettings->setStoragePageIds(array($notificationsStoragePid));
-
 		// No storage pid is set => don't respect the storage pid
 		}else{
-
 			$querySettings->setRespectStoragePage(false);
-
 		}
-		// jv. some magic to get all nofication in the users actual language or language = -1
+
+		// Get all notifications in the users actual language or language = -1
         $querySettings->setRespectSysLanguage(true);
         $querySettings->setLanguageMode('content_fallback');
-        $uc = unserialize( $GLOBALS['BE_USER']->user['uc'] ) ;
-        $lang = \TYPO3\CMS\Backend\Utility\BackendUtility::getRecordRaw('sys_language',  'language_isocode="' . $uc['lang'] . '"' , 'uid');
-        if( is_array( $lang )) {
-            $querySettings->setLanguageUid($lang['uid']);
-        }
+
+        $uc = $GLOBALS['BE_USER']->uc;
+		$langUid = $this->getLanguageUidForIsoCode($uc['lang'] ?? '');
+
+		#echo '$langUid: ' . $langUid;die();
+
+		if($langUid) {
+			$querySettings->setLanguageUid($langUid);
+		}
 
         $this->setDefaultQuerySettings($querySettings);
 
@@ -71,50 +67,49 @@ class NotificationRepository extends \TYPO3\CMS\Extbase\Persistence\Repository {
 	/**
 	 * Find all notifications (overwrite parent::findAll()
 	 * @param array $ordering ordering
-	 * @return array|\TYPO3\CMS\Extbase\Persistence\QueryResultInterface
+	 * @return QueryResultInterface|array
+	 * @author Peter Benke <info@typomotor.de>
 	 */
-	public function findAll(array $ordering = ['date' => \TYPO3\CMS\Extbase\Persistence\QueryInterface::ORDER_DESCENDING, 'type' => \TYPO3\CMS\Extbase\Persistence\QueryInterface::ORDER_DESCENDING]){
-
+	public function findAll(array $ordering = ['date' => QueryInterface::ORDER_DESCENDING, 'type' => QueryInterface::ORDER_DESCENDING])
+	{
 		$query = $this->createQuery();
 		$query->setOrderings($ordering);
-
-
-        $result = $query->execute();
-
-        return $result ;
-
+		return $query->execute();
+		// $queryParser = $this->objectManager->get(\TYPO3\CMS\Extbase\Persistence\Generic\Storage\Typo3DbQueryParser::class);
+		// \TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($queryParser->convertQueryToDoctrineQueryBuilder($query)->getSQL());
+		// \TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($queryParser->convertQueryToDoctrineQueryBuilder($query)->getParameters());
 	}
 
 	/**
 	 * Find all notifications, that are assigned to the user groups of the user
-	 * @return object|\TYPO3\CMS\Extbase\Persistence\ObjectStorage
+	 * @return ObjectStorage|object
+	 * @author Peter Benke <info@typomotor.de>
 	 */
-	public function findOnlyNotificationsAssignedToUsersUserGroup(){
+	public function findOnlyNotificationsAssignedToUsersUserGroup()
+	{
 
 		/**
-		 * @var $notification \PeterBenke\PbNotifications\Domain\Model\Notification
-		 * @var $notificationsReturn \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\PeterBenke\PbNotifications\Domain\Model\Notification>
+		 * @var Notification $notification
+		 * @var ObjectStorage<Notification> $notificationsReturn
 		 */
-
-		// All notifications
 		$notifications = $this->findAll();
 
 		// Backend user groups of the current user
 		// $beUserGroups = $GLOBALS['BE_USER']->userGroups;
-		$beUserGroups = array();
+		$beUserGroups = [];
 		foreach($GLOBALS['BE_USER']->userGroups as $key => $value){
 			$beUserGroups[] = $key;
 		}
 
 
 		// Create object storage
-		$notificationsReturn = $this->objectManager->get('TYPO3\\CMS\\Extbase\\Persistence\\ObjectStorage');
+		$notificationsReturn = $this->objectManager->get(ObjectStorage::class);
 
 		// Loop through all notifications
 		foreach($notifications as $notification){
 
 			// Get the backend user groups assigned to this notification
-			$notificationUserGroups = \TYPO3\CMS\Core\Utility\GeneralUtility::intExplode(',', $notification->getBeGroups());
+			$notificationUserGroups = GeneralUtility::intExplode(',', $notification->getBeGroups());
 
 			// If at least one group matches or the notification has no backend groups assigned or the user is admin
 			if (
@@ -135,21 +130,21 @@ class NotificationRepository extends \TYPO3\CMS\Extbase\Persistence\Repository {
 
 	/**
 	 * Find all notifications, that are assigned to the user groups of the user and are unread
-	 * @return object|\TYPO3\CMS\Extbase\Persistence\ObjectStorage
+	 * @return ObjectStorage|object
+	 * @author Peter Benke <info@typomotor.de>
 	 */
-	public function findOnlyUnreadNotificationsAssignedToUsersUserGroup(){
+	public function findOnlyUnreadNotificationsAssignedToUsersUserGroup()
+	{
 
 		/**
-		 * @var $notification \PeterBenke\PbNotifications\Domain\Model\Notification
-		 * @var $notificationsReturn \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\PeterBenke\PbNotifications\Domain\Model\Notification>
+		 * @var Notification $notification
+		 * @var ObjectStorage<Notification> $notificationsReturn
 		 */
-
-		// All notifications
 		$notifications = $this->findAll();
 
 		// Backend user groups of the current user
 		// $beUserGroups = $GLOBALS['BE_USER']->userGroups;
-		$beUserGroups = array();
+		$beUserGroups = [];
 		foreach($GLOBALS['BE_USER']->userGroups as $key => $value){
 			$beUserGroups[] = $key;
 		}
@@ -158,13 +153,13 @@ class NotificationRepository extends \TYPO3\CMS\Extbase\Persistence\Repository {
 		$beUserId = $GLOBALS['BE_USER']->user['uid'];
 
 		// Create object storage
-		$notificationsReturn = $this->objectManager->get('TYPO3\\CMS\\Extbase\\Persistence\\ObjectStorage');
+		$notificationsReturn = $this->objectManager->get(ObjectStorage::class);
 
 		// Loop through all notifications
 		foreach($notifications as $notification){
 
 			// Get the backend user groups assigned to this notification
-			$notificationUserGroups = \TYPO3\CMS\Core\Utility\GeneralUtility::intExplode(',', $notification->getBeGroups());
+			$notificationUserGroups = GeneralUtility::intExplode(',', $notification->getBeGroups());
 
 			// Get the marked as read (backend user ids, who has read the notification)
 			$markedAsReadBeUsers = $notification->getMarkedAsRead();
@@ -212,14 +207,16 @@ class NotificationRepository extends \TYPO3\CMS\Extbase\Persistence\Repository {
 	/**
 	 * Find all unread notifications
 	 * @param array $ordering
-	 * @return object|\TYPO3\CMS\Extbase\Persistence\ObjectStorage
+	 * @return ObjectStorage|object
+	 * @author Peter Benke <info@typomotor.de>
 	 */
-	public function findOnlyUnreadNotifications(array $ordering = ['type' => \TYPO3\CMS\Extbase\Persistence\QueryInterface::ORDER_DESCENDING, 'date' => \TYPO3\CMS\Extbase\Persistence\QueryInterface::ORDER_DESCENDING]){
+	public function findOnlyUnreadNotifications(array $ordering = ['type' => QueryInterface::ORDER_DESCENDING, 'date' => QueryInterface::ORDER_DESCENDING])
+	{
 
 		/**
-		 * @var $notification \PeterBenke\PbNotifications\Domain\Model\Notification
-		 * @var $markedAsReadObject \TYPO3\CMS\Beuser\Domain\Model\BackendUser
-		 * @var $notificationsReturn \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\PeterBenke\PbNotifications\Domain\Model\Notification>
+		 * @var Notification $notification
+		 * @var BackendUser $markedAsReadBeUser
+		 * @var ObjectStorage<Notification> $notificationsReturn
 		 */
 
 		// All notifications
@@ -229,14 +226,14 @@ class NotificationRepository extends \TYPO3\CMS\Extbase\Persistence\Repository {
 		$beUserId = $GLOBALS['BE_USER']->user['uid'];
 
 		// Create object storage
-		$notificationsReturn = $this->objectManager->get('TYPO3\\CMS\\Extbase\\Persistence\\ObjectStorage');
+		$notificationsReturn = $this->objectManager->get(ObjectStorage::class);
 
 		// Loop through all notifications
 		foreach($notifications as $notification){
 
 			// Get the marked as read (backend user ids, who has read the notification)
 			$markedAsReadBeUsers = $notification->getMarkedAsRead();
-			$markedAsReadArray = array();
+			$markedAsReadArray = [];
 
 			foreach($markedAsReadBeUsers as $markedAsReadBeUser){
 				$markedAsReadArray[] = $markedAsReadBeUser->getUid();
@@ -253,5 +250,26 @@ class NotificationRepository extends \TYPO3\CMS\Extbase\Persistence\Repository {
 
 	}
 
+	/**
+	 * Returns the current language uid given by the iso code
+	 * @param string $isoCode
+	 * @return int
+	 * @author Sybille Peters <https://github.com/sypets>
+	 */
+	private function getLanguageUidForIsoCode(string $isoCode):int
+	{
+		if (!$isoCode){
+			$isoCode = 'en';
+		}
+		$queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('sys_language');
+		$result = $queryBuilder->select('uid')->from('sys_language')
+			->where($queryBuilder->expr()->like('language_isocode', $queryBuilder->createNamedParameter($isoCode)))
+			->execute()
+			->fetch();
+		if ($result && $result['uid']) {
+			return (int)($result['uid']);
+		}
+		return 0;
+	}
 
 }

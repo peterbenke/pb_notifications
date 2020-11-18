@@ -1,71 +1,71 @@
 <?php
 namespace PeterBenke\PbNotifications\Utility;
 
-/***************************************************************
- *
- *  Copyright notice
- *
- *  (c) 2016 Peter Benke <info@typomotor.de>
- *
- *  All rights reserved
- *
- *  This script is part of the TYPO3 project. The TYPO3 project is
- *  free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  The GNU General Public License can be found at
- *  http://www.gnu.org/copyleft/gpl.html.
- *
- *  This script is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+/**
+ * TYPO3
+ */
+use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotConfiguredException;
+use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExistException;
+use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-class ExtensionConfigurationUtility{
+/**
+ * Class ExtensionConfigurationUtility
+ * @package PeterBenke\PbNotifications\Utility
+ * @author Peter Benke <info@typomotor.de>
+ */
+class ExtensionConfigurationUtility
+{
 
 	/**
 	 * Gets the configuration of the extension
-	 * @return array
+	 * @return array|null
+	 * @author Peter Benke <info@typomotor.de>
 	 */
-	public static function getCurrentConfiguration(){
-
+	public static function getCurrentConfiguration()
+	{
 		/**
-		 * @var \TYPO3\CMS\Extbase\Object\ObjectManager $objectManager
-		 * @var \TYPO3\CMS\Extensionmanager\Utility\ConfigurationUtility $configurationUtility
+		 * @var ExtensionConfiguration $extensionConfiguration
 		 */
-		$objectManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager');
-		$configurationUtility = $objectManager->get('TYPO3\CMS\Extensionmanager\Utility\ConfigurationUtility');
-
-		$extensionConfiguration = $configurationUtility->getCurrentConfiguration('pb_notifications');
-		return $extensionConfiguration;
-
+		$extensionConfiguration = GeneralUtility::makeInstance(ExtensionConfiguration::class);
+		try{
+			return $extensionConfiguration->get('pb_notifications');
+		}catch(ExtensionConfigurationExtensionNotConfiguredException|ExtensionConfigurationPathDoesNotExistException $e){
+			return null;
+		}
 	}
 
 	/**
 	 * Gets the notifications storage pid
 	 * @return mixed
+	 * @author Peter Benke <info@typomotor.de>
 	 */
-	public static function getNotificationsStoragePid(){
-
+	public static function getNotificationsStoragePid()
+	{
 		$configuration = self::getCurrentConfiguration();
-		return $configuration['notificationsStoragePid']['value'];
-
+		return $configuration['notificationsStoragePid'];
 	}
 
 	/**
 	 * Gets the max number of notifications shown in the toolbar (the number, which is shown, remains the same)
 	 * @return mixed
+	 * @author Peter Benke <info@typomotor.de>
 	 */
-	public static function getMaxNumberOfNotificationsInToolbar(){
-
+	public static function getMaxNumberOfNotificationsInToolbar()
+	{
 		$configuration = self::getCurrentConfiguration();
-		return $configuration['maxNumberOfNotificationsInToolbar']['value'];
+		return $configuration['maxNumberOfNotificationsInToolbar'];
+	}
 
+	/**
+	 * Checks, if a popup should be shown to the user after login
+	 * @return bool
+	 * @author Peter Benke <info@typomotor.de>
+	 */
+	public static function forcePopupAfterLogin()
+	{
+		$configuration = self::getCurrentConfiguration();
+		return (bool)$configuration['forceReminderPopUp'];
 	}
 
 }

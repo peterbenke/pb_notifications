@@ -11,7 +11,7 @@ if (TYPO3_MODE === 'BE') {
 
 	// Register the backend module
 	\TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
-		'PeterBenke.' . $_EXTKEY,
+		'PeterBenke.pb_notifications',
 		'user',	 // Make module a submodule of 'user'
 		'notifications',	// Submodule key
 		'',						// Position
@@ -20,8 +20,8 @@ if (TYPO3_MODE === 'BE') {
 		),
 		array(
 			'access' => 'user,group',
-			'icon'   => 'EXT:' . $_EXTKEY . '/Resources/Public/Icons/bell-orange.svg',
-			'labels' => 'LLL:EXT:' . $_EXTKEY . '/Resources/Private/Language/locallang.xlf:module.notifications.title',
+			'icon'   => 'EXT:pb_notifications/Resources/Public/Icons/bell-orange.svg',
+			'labels' => 'LLL:EXT:pb_notifications/Resources/Private/Language/locallang.xlf:module.notifications.title',
 		)
 	);
 
