@@ -1,4 +1,8 @@
 <?php
+
+use TYPO3\CMS\Core\Information\Typo3Version;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 if (!defined('TYPO3_MODE')) {
 	die('Access denied.');
 }
@@ -9,22 +13,42 @@ if (!defined('TYPO3_MODE')) {
 
 if (TYPO3_MODE === 'BE') {
 
-	// Register the backend module
-	\TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
-		'PeterBenke.pb_notifications',
-		'user',	 // Make module a submodule of 'user'
-		'notifications',	// Submodule key
-		'',						// Position
-		array(
-			'Notification' => 'list, show, markAsRead, markAsUnread',
-		),
-		array(
-			'access' => 'user,group',
-			'icon'   => 'EXT:pb_notifications/Resources/Public/Icons/bell-orange.svg',
-			'labels' => 'LLL:EXT:pb_notifications/Resources/Private/Language/locallang.xlf:module.notifications.title',
-		)
-	);
-
+    /** @var Typo3Version $tt */
+    $tt = GeneralUtility::makeInstance( \TYPO3\CMS\Core\Information\Typo3Version::class ) ;
+    if( $tt->getMajorVersion()  < 10 ) {
+        // Register the backend module
+        \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
+            'PeterBenke.pb_notifications',
+            'user',     // Make module a submodule of 'user'
+            'notifications',    // Submodule key
+            '',                        // Position
+            array(
+                'Notification' => 'list, show, markAsRead, markAsUnread',
+            ),
+            array(
+                'access' => 'user,group',
+                'icon' => 'EXT:pb_notifications/Resources/Public/Icons/bell-orange.svg',
+                'labels' => 'LLL:EXT:pb_notifications/Resources/Private/Language/locallang.xlf:module.notifications.title',
+            )
+        );
+    } else {
+        // Register the backend module
+        // see https://docs.typo3.org/c/typo3/cms-core/master/en-us/Changelog/10.0/Deprecation-87550-UseControllerClassesWhenRegisteringPluginsmodules.html
+        \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
+            'pb_notifications',
+            'user',     // Make module a submodule of 'user'
+            'notifications',    // Submodule key
+            '',                        // Position
+            array(
+                \PeterBenke\PbNotifications\Controller\NotificationController::class => 'list, show, markAsRead, markAsUnread',
+            ),
+            array(
+                'access' => 'user,group',
+                'icon' => 'EXT:pb_notifications/Resources/Public/Icons/bell-orange.svg',
+                'labels' => 'LLL:EXT:pb_notifications/Resources/Private/Language/locallang.xlf:module.notifications.title',
+            )
+        );
+    }
 
 	/*
 

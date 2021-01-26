@@ -53,7 +53,7 @@ class BackendHook
 		// Only unread notifications
 		// $unreadNotifications = $notificationRepository->findOnlyUnreadNotifications();
 		$unreadNotifications = $notificationRepository->findOnlyUnreadNotificationsAssignedToUsersUserGroup();
-		$unreadNotifications->count();
+
 
 		// We do not need to show a popup to the user after login
 		if($unreadNotifications->count() === 0 || !ExtensionConfigurationUtility::forcePopupAfterLogin()){

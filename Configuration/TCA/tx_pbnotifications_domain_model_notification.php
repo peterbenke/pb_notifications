@@ -124,9 +124,11 @@ return [
 			'label' => 'LLL:EXT:pb_notifications/Resources/Private/Language/locallang_db.xlf:tx_pbnotifications_domain_model_notification.date',
 			'config' => [
 				'type' => 'input',
-				'size' => 10,
-				'max' => 20,
+				'renderType' => 'inputDateTime',
+				'size' => 7,
 				'eval' => 'date,required',
+                'checkbox' => 1,
+                'default' => time()
 			],
 		],
 		'title' => [

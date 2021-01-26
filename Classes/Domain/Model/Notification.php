@@ -109,6 +109,7 @@ class Notification extends AbstractEntity
      */
     public function getContent()
     {
+        // @extensionScannerIgnoreLine
         return $this->content;
     }
     
@@ -117,6 +118,7 @@ class Notification extends AbstractEntity
      */
     public function setContent($content)
     {
+        // @extensionScannerIgnoreLine
         $this->content = $content;
     }
 
