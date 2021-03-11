@@ -14,6 +14,12 @@ ChangeLog
 ========  ======================================================
 Version:  Changes:
 ========  ======================================================
+3.0.2     Fixes: Missing Localisiations of some Fields
+          Fixes: Enable Richtext for Notification Content field
+--------  ------------------------------------------------------
+3.0.1     Compatibility to TYPO3 10, thanks to Jörg Velletti (https://github.com/velletti)
+          Not working with TYPO3 Version < 9.
+========  ======================================================
 2.0.0     Compatibility to TYPO3 9, thanks to Sybille Peters (https://github.com/sypets)
 --------  ------------------------------------------------------
 1.1.7     Enable links also, if RTE is installed
