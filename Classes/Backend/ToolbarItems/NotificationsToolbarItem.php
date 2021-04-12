@@ -12,18 +12,16 @@ use PeterBenke\PbNotifications\Utility\ExtensionConfigurationUtility;
  */
 use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Backend\Toolbar\ToolbarItemInterface;
-use TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
+use TYPO3\CMS\Core\Http\HtmlResponse;
 use TYPO3\CMS\Core\Imaging\IconFactory;
 use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
-use TYPO3\CMS\Core\Utility\VersionNumberUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Exception\InvalidExtensionNameException;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Fluid\View\StandaloneView;
-use TYPO3\CMS\Lang\LanguageService;
 
 /**
  * Psr
@@ -253,29 +251,26 @@ class NotificationsToolbarItem implements ToolbarItemInterface
 	/**
 	 * Renders the menuItem as ajax call
 	 * @param ServerRequestInterface $request
-	 * @param ResponseInterface $response
 	 * @return ResponseInterface
 	 * @author Peter Benke <info@typomotor.de>
 	 */
-	public function renderMenuItem(ServerRequestInterface $request, ResponseInterface $response)
+	public function renderMenuItem(ServerRequestInterface $request): ResponseInterface
 	{
-		unset($request); // Avoid IDE warning
+		$response = new HtmlResponse('');
 		$response->getBody()->write($this->getItem());
 		$response = $response->withHeader('Content-Type', 'text/html; charset=utf-8');
 		return $response;
 	}
 
-
 	/**
 	 * Renders the menu as ajax call
 	 * @param ServerRequestInterface $request
-	 * @param ResponseInterface $response
 	 * @return ResponseInterface
 	 * @author Peter Benke <info@typomotor.de>
 	 */
-	public function renderMenu(ServerRequestInterface $request, ResponseInterface $response)
+	public function renderMenu(ServerRequestInterface $request): ResponseInterface
 	{
-		unset($request); // Avoid IDE warning
+		$response = new HtmlResponse('');
 		$response->getBody()->write($this->getDropDown());
 		$response = $response->withHeader('Content-Type', 'text/html; charset=utf-8');
 		return $response;
@@ -319,9 +314,10 @@ class NotificationsToolbarItem implements ToolbarItemInterface
 	}
 
 	/**
-	 * Returns LanguageService
-	 * @return LanguageService
+	 * @return mixed
 	 * @author Peter Benke <info@typomotor.de>
+	 */
+	/**
 	 */
 	protected function getLanguageService()
 	{
