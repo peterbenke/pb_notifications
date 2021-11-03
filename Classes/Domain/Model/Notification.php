@@ -5,7 +5,15 @@ namespace PeterBenke\PbNotifications\Domain\Model;
  * TYPO3
  */
 use TYPO3\CMS\Extbase\Annotation as Extbase; // Needed for validation => do not remove!
+use TYPO3\CMS\Beuser\Domain\Model\BackendUser;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
+use TYPO3\CMS\Extbase\Domain\Model\FileReference;
+use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
+
+/**
+ * Php
+ */
+use DateTime;
 
 /**
  * Class Notification
@@ -16,7 +24,7 @@ class Notification extends AbstractEntity
 {
 
 	/**
-	 * @var \DateTime
+	 * @var DateTime
 	 */
 	protected $date = null;
 
@@ -33,7 +41,7 @@ class Notification extends AbstractEntity
     protected $content = '';
 
 	/**
-	 * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\TYPO3\CMS\Extbase\Domain\Model\FileReference>
+	 * @var ObjectStorage<FileReference>
 	 */
 	protected $images;
 
@@ -50,7 +58,7 @@ class Notification extends AbstractEntity
 
     /**
      * markedAsRead
-     * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\TYPO3\CMS\Beuser\Domain\Model\BackendUser>
+     * @var ObjectStorage<BackendUser>
      */
     protected $markedAsRead = null;
     
@@ -71,35 +79,36 @@ class Notification extends AbstractEntity
      */
     protected function initStorageObjects()
     {
-        $this->markedAsRead = new \TYPO3\CMS\Extbase\Persistence\ObjectStorage();
+        $this->markedAsRead = new ObjectStorage();
     }
 
 	/**
-	 * @return \DateTime
+	 * @return DateTime|null
 	 */
-	public function getDate(){
+	public function getDate(): ?DateTime
+	{
 		return $this->date;
 	}
 
 	/**
-	 * @param \DateTime $date date
+	 * @param DateTime|null $date
 	 */
-	public function setDate($date){
+	public function setDate(?DateTime $date){
 		$this->date = $date;
 	}
 
     /**
      * @return string $title
      */
-    public function getTitle()
-    {
+    public function getTitle(): string
+	{
         return $this->title;
     }
     
     /**
      * @param string $title
      */
-    public function setTitle($title)
+    public function setTitle(string $title)
     {
         $this->title = $title;
     }
@@ -107,8 +116,8 @@ class Notification extends AbstractEntity
     /**
      * @return string $content
      */
-    public function getContent()
-    {
+    public function getContent(): string
+	{
         // @extensionScannerIgnoreLine
         return $this->content;
     }
@@ -116,38 +125,39 @@ class Notification extends AbstractEntity
     /**
      * @param string $content
      */
-    public function setContent($content)
+    public function setContent(string $content)
     {
         // @extensionScannerIgnoreLine
         $this->content = $content;
     }
 
 	/**
-	 * @return \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\TYPO3\CMS\Extbase\Domain\Model\FileReference> $images
+	 * @return ObjectStorage<FileReference>|null
 	 */
-	public function getImages() {
+	public function getImages(): ?ObjectStorage
+	{
 		return $this->images;
 	}
 
 	/**
-	 * @param \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\TYPO3\CMS\Extbase\Domain\Model\FileReference> $images
+	 * @param ObjectStorage<FileReference>|null $images
 	 */
-	public function setImages($images) {
+	public function setImages(?ObjectStorage $images) {
 		$this->images = $images;
 	}
 
 	/**
      * @return int $type
      */
-    public function getType()
-    {
+    public function getType(): int
+	{
         return $this->type;
     }
     
     /**
      * @param int $type
      */
-    public function setType($type)
+    public function setType(int $type)
     {
         $this->type = $type;
     }
@@ -155,45 +165,46 @@ class Notification extends AbstractEntity
 	/**
 	 * @return string
 	 */
-	public function getBeGroups() {
+	public function getBeGroups(): string
+	{
 		return $this->beGroups;
 	}
 
 	/**
 	 * @param string $beGroups
 	 */
-	public function setBeGroups($beGroups) {
+	public function setBeGroups(string $beGroups) {
 		$this->beGroups = $beGroups;
 	}
 
     /**
-     * @param \TYPO3\CMS\Beuser\Domain\Model\BackendUser $markedAsRead
+     * @param BackendUser $markedAsRead
      */
-    public function addMarkedAsRead(\TYPO3\CMS\Beuser\Domain\Model\BackendUser $markedAsRead)
+    public function addMarkedAsRead(BackendUser $markedAsRead)
     {
         $this->markedAsRead->attach($markedAsRead);
     }
     
     /**
-     * @param \TYPO3\CMS\Beuser\Domain\Model\BackendUser $markedAsReadToRemove The BackendUser to be removed
+     * @param BackendUser $markedAsReadToRemove backend user to be removed
      */
-    public function removeMarkedAsRead(\TYPO3\CMS\Beuser\Domain\Model\BackendUser $markedAsReadToRemove)
+    public function removeMarkedAsRead(BackendUser $markedAsReadToRemove)
     {
         $this->markedAsRead->detach($markedAsReadToRemove);
     }
     
     /**
-     * @return \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\TYPO3\CMS\Beuser\Domain\Model\BackendUser> $markedAsRead
+     * @return ObjectStorage<BackendUser>|null
      */
-    public function getMarkedAsRead()
-    {
+    public function getMarkedAsRead(): ?ObjectStorage
+	{
         return $this->markedAsRead;
     }
     
     /**
-     * @param \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\TYPO3\CMS\Beuser\Domain\Model\BackendUser> $markedAsRead
+     * @param ObjectStorage<BackendUser>|null $markedAsRead
      */
-    public function setMarkedAsRead(\TYPO3\CMS\Extbase\Persistence\ObjectStorage $markedAsRead)
+    public function setMarkedAsRead(?ObjectStorage $markedAsRead)
     {
         $this->markedAsRead = $markedAsRead;
     }

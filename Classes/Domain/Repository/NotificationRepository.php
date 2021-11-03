@@ -10,7 +10,6 @@ use PeterBenke\PbNotifications\Utility\ExtensionConfigurationUtility;
 /**
  * TYPO3
  */
-use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Beuser\Domain\Model\BackendUser;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -19,6 +18,11 @@ use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;
 use TYPO3\CMS\Extbase\Persistence\QueryResultInterface;
 use TYPO3\CMS\Extbase\Persistence\Repository;
+
+/**
+ * Doctrine
+ */
+use Doctrine\DBAL\Driver\Exception as DoctrineDBALDriverException;
 
 /**
  * Class NotificationRepository
@@ -47,14 +51,13 @@ class NotificationRepository extends Repository
 			$querySettings->setRespectStoragePage(false);
 		}
 
-		// Get all notifications in the users actual language or language = -1
-        $querySettings->setRespectSysLanguage(true);
-        $querySettings->setLanguageMode('content_fallback');
+		// Get all notifications in the users current language or language = -1
+        $querySettings
+			->setRespectSysLanguage(true)
+			->setLanguageMode('content_fallback');
 
         $uc = $GLOBALS['BE_USER']->uc;
 		$langUid = $this->getLanguageUidForIsoCode($uc['lang'] ?? '');
-
-		#echo '$langUid: ' . $langUid;die();
 
 		if($langUid) {
 			$querySettings->setLanguageUid($langUid);
@@ -258,17 +261,26 @@ class NotificationRepository extends Repository
 	 */
 	private function getLanguageUidForIsoCode(string $isoCode):int
 	{
+
 		if (!$isoCode){
 			$isoCode = 'en';
 		}
 		$queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('sys_language');
-		$result = $queryBuilder->select('uid')->from('sys_language')
-			->where($queryBuilder->expr()->like('language_isocode', $queryBuilder->createNamedParameter($isoCode)))
-			->execute()
-			->fetch();
-		if ($result && $result['uid']) {
-			return (int)($result['uid']);
+
+		try{
+
+			$result = $queryBuilder->select('uid')->from('sys_language')
+				->where($queryBuilder->expr()->like('language_isocode', $queryBuilder->createNamedParameter($isoCode)))
+				->execute()
+				->fetchAssociative()
+			;
+			if($result && $result['uid']) {
+				return (int)($result['uid']);
+			}
+
+		}catch(DoctrineDBALDriverException $e){
 		}
+
 		return 0;
 	}
 

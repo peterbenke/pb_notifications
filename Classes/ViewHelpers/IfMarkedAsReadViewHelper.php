@@ -12,7 +12,6 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractConditionViewHelper;
  * TYPO3
  */
 use TYPO3\CMS\Beuser\Domain\Model\BackendUser;
-use TYPO3\CMS\Fluid\Core\ViewHelper\Exception;
 
 /**
  * Class IfMarkedAsReadViewHelper
@@ -24,7 +23,6 @@ class IfMarkedAsReadViewHelper extends AbstractConditionViewHelper
 
 	/**
 	 * Initialize arguments
-	 * @throws Exception
 	 * @author Peter Benke <info@typomotor.de>
 	 */
 	public function initializeArguments()
@@ -41,7 +39,8 @@ class IfMarkedAsReadViewHelper extends AbstractConditionViewHelper
 	 * @author Peter Benke <info@typomotor.de>
 	 * @author Sybille Peters <https://github.com/sypets>
 	 */
-	public static function verdict(array $arguments, RenderingContextInterface $renderingContext) {
+	public static function verdict(array $arguments, RenderingContextInterface $renderingContext): bool
+	{
 
 		/**
 		 * @var BackendUser $beUserMarkedAsRead

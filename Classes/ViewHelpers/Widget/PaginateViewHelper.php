@@ -2,6 +2,11 @@
 namespace PeterBenke\PbNotifications\ViewHelpers\Widget;
 
 /**
+ * PbNotifications
+ */
+use PeterBenke\PbNotifications\ViewHelpers\Widget\Controller\PaginateController;
+
+/**
  * TYPO3
  */
 use TYPO3\CMS\Extbase\Mvc\ResponseInterface;
@@ -28,15 +33,15 @@ class PaginateViewHelper extends AbstractWidgetViewHelper
 {
 
 	/**
-	 * @var \PeterBenke\PbNotifications\ViewHelpers\Widget\Controller\PaginateController
+	 * @var PaginateController
 	 */
 	protected $controller;
 
 	/**
 	 * Inject controller
-	 * @param \PeterBenke\PbNotifications\ViewHelpers\Widget\Controller\PaginateController $controller
+	 * @param PaginateController $controller
 	 */
-	public function injectController(\PeterBenke\PbNotifications\ViewHelpers\Widget\Controller\PaginateController $controller)
+	public function injectController(PaginateController $controller)
 	{
 		$this->controller = $controller;
 		$this->registerArgument('objects', ObjectStorage::class, 'Objects', true);
@@ -48,7 +53,7 @@ class PaginateViewHelper extends AbstractWidgetViewHelper
 	/**
 	 * @return ResponseInterface
 	 */
-	public function render()
+	public function render(): ResponseInterface
 	{
 		return $this->initiateSubRequest();
 	}

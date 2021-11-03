@@ -44,12 +44,11 @@ class CountUnreadNotificationsViewHelper extends AbstractViewHelper
 	 * @param array $arguments
 	 * @param Closure $renderChildrenClosure
 	 * @param RenderingContextInterface $renderingContext
-	 * @return int|mixed
+	 * @return int
 	 * @author Peter Benke <info@typomotor.de>
 	 * @author Sybille Peters <https://github.com/sypets>
-	 *
 	 */
-	public static function renderStatic(array $arguments, Closure $renderChildrenClosure, RenderingContextInterface $renderingContext)
+	public static function renderStatic(array $arguments, Closure $renderChildrenClosure, RenderingContextInterface $renderingContext): int
 	{
 
 		/**

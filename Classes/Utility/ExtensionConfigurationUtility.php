@@ -22,7 +22,7 @@ class ExtensionConfigurationUtility
 	 * @return array|null
 	 * @author Peter Benke <info@typomotor.de>
 	 */
-	public static function getCurrentConfiguration()
+	public static function getCurrentConfiguration(): ?array
 	{
 		/**
 		 * @var ExtensionConfiguration $extensionConfiguration
@@ -36,7 +36,7 @@ class ExtensionConfigurationUtility
 	}
 
 	/**
-	 * Gets the notifications storage pid
+	 * Gets the storage pid of the notifications
 	 * @return mixed
 	 * @author Peter Benke <info@typomotor.de>
 	 */
@@ -62,7 +62,7 @@ class ExtensionConfigurationUtility
 	 * @return bool
 	 * @author Peter Benke <info@typomotor.de>
 	 */
-	public static function forcePopupAfterLogin()
+	public static function forcePopupAfterLogin(): bool
 	{
 		$configuration = self::getCurrentConfiguration();
 		return (bool)$configuration['forceReminderPopUp'];

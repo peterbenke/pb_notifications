@@ -4,13 +4,13 @@ namespace PeterBenke\PbNotifications\Backend\ToolbarItems;
 /**
  * PbNotifications
  */
+use PeterBenke\PbNotifications\Domain\Model\Notification;
 use PeterBenke\PbNotifications\Domain\Repository\NotificationRepository;
 use PeterBenke\PbNotifications\Utility\ExtensionConfigurationUtility;
 
 /**
  * TYPO3
  */
-use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Backend\Toolbar\ToolbarItemInterface;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Http\HtmlResponse;
@@ -21,6 +21,7 @@ use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Exception\InvalidExtensionNameException;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
+use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 use TYPO3\CMS\Fluid\View\StandaloneView;
 
 /**
@@ -49,14 +50,12 @@ class NotificationsToolbarItem implements ToolbarItemInterface
 	protected $iconFactory;
 
 	/**
-	 * @var \TYPO3\CMS\Extbase\Object\ObjectManager
+	 * @var ObjectManager
 	 */
 	protected $objectManager;
 
 	/**
-	 * notificationRepository
-	 *
-	 * @var \PeterBenke\PbNotifications\Domain\Repository\NotificationRepository
+	 * @var NotificationRepository
 	 */
 	protected $notificationRepository;
 
@@ -66,12 +65,12 @@ class NotificationsToolbarItem implements ToolbarItemInterface
 	protected $extPath;
 
 	/**
-	 * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\PeterBenke\PbNotifications\Domain\Model\Notification>
+	 * @var ObjectStorage<Notification>
 	 */
 	protected $notifications;
 
 	/**
-	 * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\PeterBenke\PbNotifications\Domain\Model\Notification>
+	 * @var ObjectStorage<Notification>
 	 */
 	protected $onlyUnreadNotifications;
 
@@ -113,9 +112,8 @@ class NotificationsToolbarItem implements ToolbarItemInterface
 	 * @return bool TRUE if user has access, FALSE if not
 	 * @author Peter Benke <info@typomotor.de>
 	 */
-	public function checkAccess()
+	public function checkAccess(): bool
 	{
-
 		$beUser = $this->getBackendUser();
 		if (
 			$beUser->isAdmin()
@@ -125,9 +123,6 @@ class NotificationsToolbarItem implements ToolbarItemInterface
 			return true;
 		}
 		return false;
-
-		// $conf = $this->getBackendUser()->getTSConfig('backendToolbarItem.tx_pbnotifications.disabled');
-		// return $conf['value'] != 1;
 	}
 
 	/**
@@ -135,7 +130,7 @@ class NotificationsToolbarItem implements ToolbarItemInterface
 	 * @return string
 	 * @author Peter Benke <info@typomotor.de>
 	 */
-	public function getItem()
+	public function getItem(): string
 	{
 
 		if (!$this->checkAccess()) {
@@ -165,17 +160,17 @@ class NotificationsToolbarItem implements ToolbarItemInterface
 	 * @return bool
 	 * @author Peter Benke <info@typomotor.de>
 	 */
-	public function hasDropDown()
+	public function hasDropDown(): bool
 	{
 		return true;
 	}
 
 	/**
-	 * Get the drop down menu
+	 * Get the dropdown menu
 	 * @return string
 	 * @author Peter Benke <info@typomotor.de>
 	 */
-	public function getDropDown()
+	public function getDropDown(): string
 	{
 
 		if (!$this->checkAccess()) {
@@ -196,20 +191,7 @@ class NotificationsToolbarItem implements ToolbarItemInterface
 			$maxNumberOfNotificationsInToolbar = 1000;
 		}
 
-		/** @var UriBuilder $uriBuilder */
-		/*
-		$notificationListUrl = null;
-		try{
-			$uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
-			$notificationListUrl = $uriBuilder->buildUriFromRoute('user_PbNotificationsNotifications');
-		}catch(RouteNotFoundException $e){
-			return $e->getMessage();
-		}
-		*/
-
 		$this->standaloneView->assignMultiple([
-//			't3Version' => substr(VersionNumberUtility::getNumericTypo3Version(), 0, 1)
-//			'notificationListUrl' => $notificationListUrl,
 			'onlyUnreadNotifications' => $this->onlyUnreadNotifications,
 			'maxNumberOfNotificationsInToolbar' => $maxNumberOfNotificationsInToolbar,
 		]);
@@ -223,7 +205,7 @@ class NotificationsToolbarItem implements ToolbarItemInterface
 	 * @return array List item HTML attributes
 	 * @author Peter Benke <info@typomotor.de>
 	 */
-	public function getAdditionalAttributes()
+	public function getAdditionalAttributes(): array
 	{
 		return [];
 	}
@@ -233,7 +215,7 @@ class NotificationsToolbarItem implements ToolbarItemInterface
 	 * @return int
 	 * @author Peter Benke <info@typomotor.de>
 	 */
-	public function getIndex()
+	public function getIndex(): int
 	{
 		return 30;
 	}
@@ -258,8 +240,7 @@ class NotificationsToolbarItem implements ToolbarItemInterface
 	{
 		$response = new HtmlResponse('');
 		$response->getBody()->write($this->getItem());
-		$response = $response->withHeader('Content-Type', 'text/html; charset=utf-8');
-		return $response;
+		return $response->withHeader('Content-Type', 'text/html; charset=utf-8');
 	}
 
 	/**
@@ -272,8 +253,7 @@ class NotificationsToolbarItem implements ToolbarItemInterface
 	{
 		$response = new HtmlResponse('');
 		$response->getBody()->write($this->getDropDown());
-		$response = $response->withHeader('Content-Type', 'text/html; charset=utf-8');
-		return $response;
+		return $response->withHeader('Content-Type', 'text/html; charset=utf-8');
 	}
 
 	/**
@@ -305,10 +285,10 @@ class NotificationsToolbarItem implements ToolbarItemInterface
 
 	/**
 	 * Returns the current BE user
-	 * @return BackendUserAuthentication
+	 * @return BackendUserAuthentication|mixed
 	 * @author Peter Benke <info@typomotor.de>
 	 */
-	protected function getBackendUser()
+	protected function getBackendUser(): ?BackendUserAuthentication
 	{
 		return $GLOBALS['BE_USER'];
 	}
@@ -316,8 +296,6 @@ class NotificationsToolbarItem implements ToolbarItemInterface
 	/**
 	 * @return mixed
 	 * @author Peter Benke <info@typomotor.de>
-	 */
-	/**
 	 */
 	protected function getLanguageService()
 	{

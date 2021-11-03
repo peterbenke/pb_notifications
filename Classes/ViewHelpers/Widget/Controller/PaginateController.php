@@ -129,7 +129,7 @@ class PaginateController extends AbstractWidgetController
 	 * Returns an array with the keys "pages", "current", "numberOfPages", "nextPage" & "previousPage"
 	 * @return array
 	 */
-	protected function buildPagination()
+	protected function buildPagination(): array
 	{
 		$this->calculateDisplayRange();
 		$pages = [];
@@ -160,17 +160,19 @@ class PaginateController extends AbstractWidgetController
 	 * @return array|QueryResultInterface
 	 * @throws InvalidArgumentException
 	 */
-	protected function prepareObjectsSlice($itemsPerPage, $offset)
+	protected function prepareObjectsSlice(int $itemsPerPage, int $offset)
 	{
 		if ($this->objects instanceof QueryResultInterface) {
+
 			$query = $this->objects->getQuery();
 			$query->setLimit($itemsPerPage);
 			if ($offset > 0) {
 				$query->setOffset($offset);
 			}
-			$modifiedObjects = $query->execute();
-			return $modifiedObjects;
+			return $query->execute();
+
 		} elseif ($this->objects instanceof ObjectStorage) {
+
 			$modifiedObjects = [];
 			$objectArray = $this->objects->toArray();
 			$endOfRange = min($offset + $itemsPerPage, count($objectArray));
@@ -178,9 +180,11 @@ class PaginateController extends AbstractWidgetController
 				$modifiedObjects[] = $objectArray[$i];
 			}
 			return $modifiedObjects;
+
 		} elseif (is_array($this->objects)) {
-			$modifiedObjects = array_slice($this->objects, $offset, $itemsPerPage);
-			return $modifiedObjects;
+
+			return array_slice($this->objects, $offset, $itemsPerPage);
+
 		} else {
 			throw new InvalidArgumentException('The view helper "' . get_class($this)
 				. '" accepts as argument "QueryResultInterface", "\SplObjectStorage", "ObjectStorage" or an array. '

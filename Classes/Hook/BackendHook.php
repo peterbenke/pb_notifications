@@ -13,6 +13,7 @@ use PeterBenke\PbNotifications\Utility\ExtensionConfigurationUtility;
 use TYPO3\CMS\Backend\Controller\BackendController;
 use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Object\Exception as TYPO3ExtbaseObjectException;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
 
 /**
@@ -25,7 +26,7 @@ class BackendHook
 
 	/**
 	 * Reference back to the backend
-	 * @var \TYPO3\CMS\Backend\Controller\BackendController
+	 * @var BackendController
 	 */
 	protected $backendReference;
 
@@ -33,6 +34,7 @@ class BackendHook
 	 * Show the reminder after login
 	 * @param array $config
 	 * @param BackendController $backendReference
+	 * @throws TYPO3ExtbaseObjectException
 	 * @author Peter Benke <info@typomotor.de>
 	 * @author Sybille Peters <https://github.com/sypets>
 	 */

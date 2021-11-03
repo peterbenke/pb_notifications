@@ -5,6 +5,7 @@ namespace PeterBenke\PbNotifications\Controller;
  * PbNotifications
  */
 use PeterBenke\PbNotifications\Domain\Model\Notification;
+use PeterBenke\PbNotifications\Domain\Repository\NotificationRepository;
 
 /**
  * TYPO3
@@ -12,16 +13,11 @@ use PeterBenke\PbNotifications\Domain\Model\Notification;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Beuser\Domain\Model\BackendUser;
 use TYPO3\CMS\Beuser\Domain\Repository\BackendUserRepository;
-use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
-use TYPO3\CMS\Core\Utility\VersionNumberUtility;
-use TYPO3\CMS\Core\Html\RteHtmlParser;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
-use TYPO3\CMS\Extbase\Mvc\Exception\UnsupportedRequestTypeException;
 use TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager;
 use TYPO3\CMS\Extbase\Persistence\Exception\IllegalObjectTypeException;
 use TYPO3\CMS\Extbase\Persistence\Exception\UnknownObjectException;
-
 
 /**
  * Class NotificationController
@@ -32,33 +28,33 @@ class NotificationController extends ActionController
 {
 
 	/**
-	 * @var \PeterBenke\PbNotifications\Domain\Repository\NotificationRepository
+	 * @var NotificationRepository
 	 */
 	protected $notificationRepository = null;
 
 	/**
-	 * @var \TYPO3\CMS\Beuser\Domain\Repository\BackendUserRepository
+	 * @var BackendUserRepository
 	 */
 	protected $backendUserRepository = null;
 
 	/**
-	 * @param \PeterBenke\PbNotifications\Domain\Repository\NotificationRepository $notificationRepository
+	 * @param NotificationRepository $notificationRepository
 	 */
-	public function injectNotificationRepository(\PeterBenke\PbNotifications\Domain\Repository\NotificationRepository $notificationRepository)
+	public function injectNotificationRepository(NotificationRepository $notificationRepository)
 	{
 		$this->notificationRepository = $notificationRepository;
 	}
 
 	/**
-	 * @param \TYPO3\CMS\Beuser\Domain\Repository\BackendUserRepository $backendUserRepository
+	 * @param BackendUserRepository $backendUserRepository
 	 */
-	public function injectBackendUserRepository(\TYPO3\CMS\Beuser\Domain\Repository\BackendUserRepository $backendUserRepository)
+	public function injectBackendUserRepository(BackendUserRepository $backendUserRepository)
 	{
 		$this->backendUserRepository = $backendUserRepository;
 	}
 
 	/**
-	 * @var \TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager
+	 * @var PersistenceManager
 	 */
 	protected $persistManager = null;
 
@@ -126,37 +122,13 @@ class NotificationController extends ActionController
 	{
 
 		// $beUserGroups = $this->getBackendUserGroupsAsArray($GLOBALS['BE_USER']->user['uid']);
-		// $beUserGroups = $this->getBackendUserGroupsAsArray($GLOBALS['BE_USER']->user['uid']);
 		// print_r($GLOBALS['BE_USER']->userGroups);
 
-		// $notifications = $this->notificationRepository->findAll();
 		$notifications = $this->notificationRepository->findOnlyNotificationsAssignedToUsersUserGroup();
-
-		/**
-		 * @var RteHtmlParser $rteHtmlParser
-		 * @var Notification $notification
-		 */
-
-		$rte = false;
-
-		// If we have an RTE, we have to clean the links
-		if(ExtensionManagementUtility::isLoaded('rtehtmlarea')){
-
-			$rteHtmlParser = $this->objectManager->get(RteHtmlParser::class);
-			foreach ($notifications as $notification){
-				// Todo: deprecated (is there anyone, who uses rtehtmlarea?)
-				$contentWithRteLinks = $rteHtmlParser->TS_links_rte($notification->getContent());
-				$notification->setContent($contentWithRteLinks);
-			}
-			$rte = true;
-
-		}
-
 		$this->view->assignMultiple(
 			[
 				'notifications' => $notifications,
 				'user' => $GLOBALS['BE_USER']->user,
-				'RTE' => $rte
 			]
 		);
 
@@ -167,7 +139,6 @@ class NotificationController extends ActionController
 	 * @throws IllegalObjectTypeException
 	 * @throws UnknownObjectException
 	 * @throws StopActionException
-	 * @throws UnsupportedRequestTypeException
 	 * @author Peter Benke <info@typomotor.de>
 	 */
 	public function markAsReadAction()
@@ -181,7 +152,6 @@ class NotificationController extends ActionController
 	 * @throws IllegalObjectTypeException
 	 * @throws StopActionException
 	 * @throws UnknownObjectException
-	 * @throws UnsupportedRequestTypeException
 	 * @author Peter Benke <info@typomotor.de>
 	 */
 	public function markAsUnreadAction()

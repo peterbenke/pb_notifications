@@ -29,7 +29,7 @@ Notifications
         backend, notifications, editors
 
     :Copyright:
-        2018
+        2021
 
     :Author:
         Peter Benke

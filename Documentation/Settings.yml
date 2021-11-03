@@ -6,6 +6,6 @@
 conf.py:
   copyright: 2020
   project: Notifications
-  version: 2.0
-  release: 2.0.0
+  version: 10.4.0
+  release: 10.4
 ...
