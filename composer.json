@@ -26,5 +26,10 @@
     "psr-4": {
       "PeterBenke\\PbNotifications\\": "Classes"
     }
+  },
+  "extra": {
+    "typo3/cms": {
+      "extension-key": "pb_notifications"
+    }
   }
 }
