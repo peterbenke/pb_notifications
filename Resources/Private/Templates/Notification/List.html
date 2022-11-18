@@ -8,12 +8,11 @@
 	<f:if condition="{notifications}">
 
 		<f:then>
-			<pb:widget.paginate objects="{notifications}" as="paginatedNotifications" configuration="{itemsPerPage: 10, insertAbove: 1}">
-
-				<f:for each="{paginatedNotifications}" as="notification">
-
-					<div class="panel panel-{f:if(condition:'{notification.type} == 1', then: 'danger', else: 'info')} {pb:ifMarkedAsRead(markedAsRead:'{notification.markedAsRead}', then: 'markedAsRead', else: 'unread')}">
-						<div class="panel-heading clearfix">
+			<pb:widget.paginate objects="{notifications}" as="pagination" configuration="{itemsPerPage: 1, insertAbove: 1}">
+				<f:render partial="Pagination" arguments="{pagination: pagination, configuration: configuration}" contentAs="childrens">
+					<f:for each="{pagination.items}" as="notification">
+						<div class="panel panel-{f:if(condition:'{notification.type} == 1', then: 'danger', else: 'info')} {pb:ifMarkedAsRead(markedAsRead:'{notification.markedAsRead}', then: 'markedAsRead', else: 'unread')}">
+							<div class="panel-heading clearfix">
 						<span class="t3js-icon icon icon-size-small icon-state-default">
 							<span class="icon-markup">
 								<span class="icon-unify">
@@ -21,42 +20,42 @@
 								</span>
 							</span>
 						</span>
-							<span><f:format.date date="{notification.date}" format="{f:translate(key:'notifications.list.dateFormat')}" /></span>
-						</div>
-						<div class="panel-body">
-							<h2>{notification.title}</h2>
-
-							<f:if condition="{notification.images}">
-								<div class="images">
-									<f:for each="{notification.images}" as="image">
-										<a href="/{image.originalResource.publicUrl}" rel="prettyPhoto[gal]">
-											<f:image maxWidth="250" src="{image.originalResource.originalFile.uid}" alt="{image.originalResource.originalFile.alternative}" />
-											<br>
-										</a>
-									</f:for>
-								</div>
-							</f:if>
-
-							<div class="content">
-								<f:format.raw>{notification.content}</f:format.raw>
+								<span><f:format.date date="{notification.date}" format="{f:translate(key:'notifications.list.dateFormat')}" /></span>
 							</div>
+							<div class="panel-body">
+								<h2>{notification.title}</h2>
 
+								<f:if condition="{notification.images}">
+									<div class="images">
+										<f:for each="{notification.images}" as="image">
+											<a href="/{image.originalResource.publicUrl}" rel="prettyPhoto[gal]">
+												<f:image maxWidth="250" src="{image.originalResource.originalFile.uid}" alt="{image.originalResource.originalFile.alternative}" />
+												<br>
+											</a>
+										</f:for>
+									</div>
+								</f:if>
+
+								<div class="content">
+									<f:format.raw>{notification.content}</f:format.raw>
+								</div>
+
+							</div>
 						</div>
-					</div>
 
-					<pb:ifMarkedAsRead markedAsRead="{notification.markedAsRead}">
-						<f:then>
-							<f:link.action class="btn btn-warning" action="markAsUnread" arguments="{uid:notification.uid}"><i class="fa fa-close"></i> <f:translate key="notifications.list.markAsUnread" /></f:link.action>
-						</f:then>
-						<f:else>
-							<f:link.action class="btn btn-success" action="markAsRead" arguments="{uid:notification.uid}"><i class="fa fa-check"></i> <f:translate key="notifications.list.gotit" /></f:link.action>
-						</f:else>
-					</pb:ifMarkedAsRead>
+						<pb:ifMarkedAsRead markedAsRead="{notification.markedAsRead}">
+							<f:then>
+								<f:link.action class="btn btn-warning" action="markAsUnread" arguments="{uid:notification.uid}"><i class="fa fa-close"></i> <f:translate key="notifications.list.markAsUnread" /></f:link.action>
+							</f:then>
+							<f:else>
+								<f:link.action class="btn btn-success" action="markAsRead" arguments="{uid:notification.uid}"><i class="fa fa-check"></i> <f:translate key="notifications.list.gotit" /></f:link.action>
+							</f:else>
+						</pb:ifMarkedAsRead>
 
-					<hr>
+						<hr>
 
-				</f:for>
-
+					</f:for>
+				</f:render>
 			</pb:widget.paginate>
 
 		</f:then>
