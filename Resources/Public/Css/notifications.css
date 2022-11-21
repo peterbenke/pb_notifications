@@ -1,3 +1,18 @@
+.tx_pb-notifications {
+	padding: 24px;
+	margin-top: 0;
+	transition: border .2s ease;
+}
+.tx_pb-notifications .panel-danger>.panel-heading {
+	color: #c83c3c;
+	background-color: #efc7c7;
+	border-color: #c83c3c;
+}
+.tx_pb-notifications .panel-info>.panel-heading {
+	color: #6daae0;
+	background-color: #ebf3fb;
+	border-color: #6daae0;
+}
 .tx_pb-notifications .panel.markedAsRead{
 	opacity:0.4;
 }
