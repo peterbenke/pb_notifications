@@ -8,7 +8,7 @@
 	<f:if condition="{notifications}">
 
 		<f:then>
-			<pb:widget.paginate objects="{notifications}" as="pagination" configuration="{itemsPerPage: 1, insertAbove: 1}">
+			<pb:widget.paginate objects="{notifications}" as="pagination" configuration="{itemsPerPage: 10, insertAbove: 1}">
 				<f:render partial="Pagination" arguments="{pagination: pagination, configuration: configuration}" contentAs="childrens">
 					<f:for each="{pagination.items}" as="notification">
 						<div class="panel panel-{f:if(condition:'{notification.type} == 1', then: 'danger', else: 'info')} {pb:ifMarkedAsRead(markedAsRead:'{notification.markedAsRead}', then: 'markedAsRead', else: 'unread')}">
