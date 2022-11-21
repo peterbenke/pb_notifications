@@ -3,7 +3,7 @@
 use TYPO3\CMS\Core\Information\Typo3Version;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-if (!defined('TYPO3_MODE')) {
+if (!defined('TYPO3')) {
 	die('Access denied.');
 }
 
@@ -17,12 +17,12 @@ if (TYPO3_MODE === 'BE') {
     if( $tt->getMajorVersion()  < 10 ) {
         // Register the backend module
         \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
-            'PeterBenke.pb_notifications',
+            'PbNotifications',
             'user',     // Make module a submodule of 'user'
             'notifications',    // Submodule key
             '',                        // Position
             array(
-                'Notification' => 'list, show, markAsRead, markAsUnread',
+                \PeterBenke\PbNotifications\Controller\NotificationController::class => 'list, show, markAsRead, markAsUnread',
             ),
             array(
                 'access' => 'user,group',
