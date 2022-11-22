@@ -2,7 +2,7 @@
 namespace PeterBenke\PbNotifications\Controller;
 
 /**
- * PbNotifications
+ * PeterBenke
  */
 use PeterBenke\PbNotifications\Domain\Model\Notification;
 use PeterBenke\PbNotifications\Domain\Repository\NotificationRepository;
@@ -21,21 +21,20 @@ use TYPO3\CMS\Extbase\Persistence\Exception\UnknownObjectException;
 
 /**
  * Class NotificationController
- * @package PeterBenke\PbNotifications\Controller
  * @author Peter Benke <info@typomotor.de>
  */
 class NotificationController extends ActionController
 {
 
 	/**
-	 * @var NotificationRepository
+	 * @var NotificationRepository|null
 	 */
-	protected $notificationRepository = null;
+	protected ?NotificationRepository $notificationRepository = null;
 
 	/**
-	 * @var BackendUserRepository
+	 * @var BackendUserRepository|null
 	 */
-	protected $backendUserRepository = null;
+	protected ?BackendUserRepository $backendUserRepository = null;
 
 	/**
 	 * @param NotificationRepository $notificationRepository
@@ -54,9 +53,9 @@ class NotificationController extends ActionController
 	}
 
 	/**
-	 * @var PersistenceManager
+	 * @var PersistenceManager|null
 	 */
-	protected $persistManager = null;
+	protected ?PersistenceManager $persistManager = null;
 
 
 	/**

@@ -2,7 +2,7 @@
 namespace PeterBenke\PbNotifications\Domain\Repository;
 
 /**
- * PbNotifications
+ * PeterBenke
  */
 use PeterBenke\PbNotifications\Domain\Model\Notification;
 use PeterBenke\PbNotifications\Utility\ExtensionConfigurationUtility;
@@ -22,11 +22,11 @@ use TYPO3\CMS\Extbase\Persistence\Repository;
 /**
  * Doctrine
  */
+use Doctrine\DBAL\DBALException as DoctrineDBALDBALException;
 use Doctrine\DBAL\Driver\Exception as DoctrineDBALDriverException;
 
 /**
  * Class NotificationRepository
- * @package PeterBenke\PbNotifications\Domain\Repository
  * @author Peter Benke <info@typomotor.de>
  */
 class NotificationRepository extends Repository
@@ -45,7 +45,7 @@ class NotificationRepository extends Repository
 
 		// If storage pid is set
 		if(intval($notificationsStoragePid) > 0){
-			$querySettings->setStoragePageIds(array($notificationsStoragePid));
+			$querySettings->setStoragePageIds([$notificationsStoragePid]);
 		// No storage pid is set => don't respect the storage pid
 		}else{
 			$querySettings->setRespectStoragePage(false);
@@ -166,7 +166,7 @@ class NotificationRepository extends Repository
 
 			// Get the marked as read (backend user ids, who has read the notification)
 			$markedAsReadBeUsers = $notification->getMarkedAsRead();
-			$markedAsReadArray = array();
+			$markedAsReadArray = [];
 
 			foreach($markedAsReadBeUsers as $markedAsReadBeUser){
 				$markedAsReadArray[] = $markedAsReadBeUser->getUid();
@@ -257,7 +257,8 @@ class NotificationRepository extends Repository
 	 * Returns the current language uid given by the iso code
 	 * @param string $isoCode
 	 * @return int
-	 * @author Sybille Peters <https://github.com/sypets>
+	 * @throws DoctrineDBALDBALException
+	 * @author Peter Benke <info@typomotor.de>
 	 */
 	private function getLanguageUidForIsoCode(string $isoCode):int
 	{

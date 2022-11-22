@@ -1,53 +1,40 @@
 <?php
 
-use TYPO3\CMS\Core\Information\Typo3Version;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
+/**
+ * PeterBenke
+ */
+use PeterBenke\PbNotifications\Backend\ToolbarItems\NotificationsToolbarItem;
 
-if (!defined('TYPO3')) {
-	die('Access denied.');
-}
+/**
+ * TYPO3
+ */
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
 
-\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addLLrefForTCAdescr('tx_pbnotifications_domain_model_notification', 'EXT:pb_notifications/Resources/Private/Language/locallang_csh_tx_pbnotifications_domain_model_notification.xlf');
-\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::allowTableOnStandardPages('tx_pbnotifications_domain_model_notification');
 
-if (TYPO3_MODE === 'BE') {
+defined('TYPO3') or die();
 
-    /** @var Typo3Version $tt */
-    $tt = GeneralUtility::makeInstance( \TYPO3\CMS\Core\Information\Typo3Version::class ) ;
-    if( $tt->getMajorVersion()  < 10 ) {
-        // Register the backend module
-        \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
-            'PbNotifications',
-            'user',     // Make module a submodule of 'user'
-            'notifications',    // Submodule key
-            '',                        // Position
-            array(
-                \PeterBenke\PbNotifications\Controller\NotificationController::class => 'list, show, markAsRead, markAsUnread',
-            ),
-            array(
-                'access' => 'user,group',
-                'icon' => 'EXT:pb_notifications/Resources/Public/Icons/bell-orange.svg',
-                'labels' => 'LLL:EXT:pb_notifications/Resources/Private/Language/locallang.xlf:module.notifications.title',
-            )
-        );
-    } else {
-        // Register the backend module
-        // see https://docs.typo3.org/c/typo3/cms-core/master/en-us/Changelog/10.0/Deprecation-87550-UseControllerClassesWhenRegisteringPluginsmodules.html
-        \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
-            'pb_notifications',
-            'user',     // Make module a submodule of 'user'
-            'notifications',    // Submodule key
-            '',                        // Position
-            array(
-                \PeterBenke\PbNotifications\Controller\NotificationController::class => 'list, show, markAsRead, markAsUnread',
-            ),
-            array(
-                'access' => 'user,group',
-                'icon' => 'EXT:pb_notifications/Resources/Public/Icons/bell-orange.svg',
-                'labels' => 'LLL:EXT:pb_notifications/Resources/Private/Language/locallang.xlf:module.notifications.title',
-            )
-        );
-    }
+$boot = static function (): void {
+
+	ExtensionManagementUtility::addLLrefForTCAdescr('tx_pbnotifications_domain_model_notification', 'EXT:pb_notifications/Resources/Private/Language/locallang_csh_tx_pbnotifications_domain_model_notification.xlf');
+	ExtensionManagementUtility::allowTableOnStandardPages('tx_pbnotifications_domain_model_notification');
+
+	// Register the backend module
+	ExtensionUtility::registerModule(
+		'pb_notifications',
+		'user',     // Make module a submodule of 'user'
+		'notifications',    // Submodule key
+		'',                        // Position
+		[
+			\PeterBenke\PbNotifications\Controller\NotificationController::class => 'list, show, markAsRead, markAsUnread',
+		],
+		[
+			'access' => 'user,group',
+			'icon' => 'EXT:pb_notifications/Resources/Public/Icons/bell-orange.svg',
+			'labels' => 'LLL:EXT:pb_notifications/Resources/Private/Language/locallang.xlf:module.notifications.title',
+		]
+	);
+
 
 	/*
 
@@ -84,7 +71,12 @@ if (TYPO3_MODE === 'BE') {
 	*/
 
 	// Register update signals to update the number of unread notifications in the toolbar, see also /Classes/Controller/NotificationController.php
-	$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_befunc.php']['updateSignalHook']['PbNotificationsToolbar::updateMenu'] = \PeterBenke\PbNotifications\Backend\ToolbarItems\NotificationsToolbarItem::class . '->updateMenuHook';
+	$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_befunc.php']['updateSignalHook']['PbNotificationsToolbar::updateMenu'] = NotificationsToolbarItem::class . '->updateMenuHook';
 
-}
+};
+
+$boot();
+unset($boot);
+
+
 

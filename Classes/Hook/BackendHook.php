@@ -13,12 +13,9 @@ use PeterBenke\PbNotifications\Utility\ExtensionConfigurationUtility;
 use TYPO3\CMS\Backend\Controller\BackendController;
 use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Object\Exception as TYPO3ExtbaseObjectException;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
 
 /**
  * Class BackendHook
- * @package PeterBenke\PbNotifications\Hook
  * @author Peter Benke <info@typomotor.de>
  */
 class BackendHook
@@ -28,40 +25,31 @@ class BackendHook
 	 * Reference back to the backend
 	 * @var BackendController
 	 */
-	protected $backendReference;
+	protected BackendController $backendReference;
 
 	/**
 	 * Show the reminder after login
 	 * @param array $config
 	 * @param BackendController $backendReference
-	 * @throws TYPO3ExtbaseObjectException
 	 * @author Peter Benke <info@typomotor.de>
-	 * @author Sybille Peters <https://github.com/sypets>
 	 */
 	public function constructPostProcess(array $config, BackendController &$backendReference)
 	{
 
-		/**
-		 * @var ObjectManager $objectManager
-		 * @var PageRenderer $pageRenderer
-		 * @var NotificationRepository $notificationRepository
-		 */
-
 		// Create objects
-		$objectManager = GeneralUtility::makeInstance(ObjectManager::class);
-		$pageRenderer = $objectManager->get(PageRenderer::class);
-		$notificationRepository = $objectManager->get(NotificationRepository::class);
+		/** @var NotificationRepository $notificationRepository */
+		$notificationRepository = GeneralUtility::makeInstance(NotificationRepository::class);
 
 		// Only unread notifications
 		// $unreadNotifications = $notificationRepository->findOnlyUnreadNotifications();
 		$unreadNotifications = $notificationRepository->findOnlyUnreadNotificationsAssignedToUsersUserGroup();
-
 
 		// We do not need to show a popup to the user after login
 		if($unreadNotifications->count() === 0 || !ExtensionConfigurationUtility::forcePopupAfterLogin()){
 			return;
 		}
 
+		/** @var PageRenderer $pageRenderer */
 		$pageRenderer = GeneralUtility::makeInstance(PageRenderer::class);
 		$pageRenderer->addInlineLanguageLabelFile('EXT:pb_notifications/Resources/Private/Language/locallang.xlf');
 		$pageRenderer->loadRequireJsModule(

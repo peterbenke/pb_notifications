@@ -11,7 +11,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Class ExtensionConfigurationUtility
- * @package PeterBenke\PbNotifications\Utility
  * @author Peter Benke <info@typomotor.de>
  */
 class ExtensionConfigurationUtility

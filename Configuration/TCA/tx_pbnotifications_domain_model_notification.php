@@ -12,11 +12,11 @@ return [
         'transOrigPointerField' => 'l10n_parent',
         'transOrigDiffSourceField' => 'l10n_diffsource',
         'delete' => 'deleted',
-        'enablecolumns' => array(
+        'enablecolumns' => [
             'disabled' => 'hidden',
             'starttime' => 'starttime',
             'endtime' => 'endtime',
-        ),
+		],
         'searchFields' => 'title,content,type,marked_as_read,',
         'iconfile' => 'EXT:pb_notifications/Resources/Public/Icons/tx_pbnotifications_domain_model_notification.svg',
     ],

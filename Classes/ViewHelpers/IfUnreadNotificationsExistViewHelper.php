@@ -9,7 +9,6 @@ use PeterBenke\PbNotifications\Domain\Model\Notification;
 /**
  * TYPO3Fluid
  */
-
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractConditionViewHelper;
 
@@ -20,7 +19,6 @@ use TYPO3\CMS\Beuser\Domain\Model\BackendUser;
 
 /**
  * Class IfUnreadNotificationsExistViewHelper
- * @package PeterBenke\PbNotifications\ViewHelpers
  * @author Peter Benke <info@typomotor.de>
  */
 class IfUnreadNotificationsExistViewHelper extends AbstractConditionViewHelper
@@ -42,15 +40,9 @@ class IfUnreadNotificationsExistViewHelper extends AbstractConditionViewHelper
 	 * @param RenderingContextInterface $renderingContext
 	 * @return bool
 	 * @author Peter Benke <info@typomotor.de>
-	 * @author Sybille Peters <https://github.com/sypets>
 	 */
 	public static function verdict(array $arguments, RenderingContextInterface $renderingContext): bool
 	{
-
-		/**
-		 * @var Notification $notification
-		 * @var BackendUser $beUserMarkedAsRead
-		 */
 
 		// Backend user id
 		$beUserId = $GLOBALS['BE_USER']->user['uid'];
@@ -58,11 +50,14 @@ class IfUnreadNotificationsExistViewHelper extends AbstractConditionViewHelper
 		$unreadNotificationsExist = false;
 
 		if(isset($arguments['notifications'])){
+
+			/** @var Notification $notification */
 			foreach($arguments['notifications'] as $notification){
 
 				$markedAsReadObjects = $notification->getMarkedAsRead();
 				$markedAsRead = array();
 
+				/** @var BackendUser $beUserMarkedAsRead */
 				foreach($markedAsReadObjects as $beUserMarkedAsRead){
 					$markedAsRead[] = $beUserMarkedAsRead->getUid();
 				}

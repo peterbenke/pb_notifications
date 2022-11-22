@@ -3,23 +3,25 @@
 namespace PeterBenke\PbNotifications\ViewHelpers\Widget;
 
 /**
- * PbNotifications
- */
-
-use Closure;
-
-/**
  * TYPO3
  */
-
 use TYPO3\CMS\Core\Pagination\ArrayPaginator;
 use TYPO3\CMS\Core\Pagination\SimplePagination;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 use TYPO3\CMS\Extbase\Service\ExtensionService;
+
+/**
+ * TYPO3Fluid
+ */
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
+
+/**
+ * Php
+ */
+use Closure;
 
 /**
  * Class PaginateViewHelper
@@ -69,8 +71,8 @@ class PaginateViewHelper extends AbstractViewHelper
         array                     $arguments,
         Closure                   $renderChildrenClosure,
         RenderingContextInterface $renderingContext
-    )
-    {
+    ): string
+	{
         $configuration = [
             'itemsPerPage' => 10,
             'insertAbove' => false,

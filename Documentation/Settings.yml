@@ -4,8 +4,8 @@
 
 ---
 conf.py:
-  copyright: 2020
+  copyright: 2022
   project: Notifications
-  version: 10.4.0
-  release: 10.4
+  version: 11.5.0
+  release: 11.5
 ...

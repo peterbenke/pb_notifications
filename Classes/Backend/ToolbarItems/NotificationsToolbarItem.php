@@ -19,7 +19,6 @@ use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Mvc\Exception\InvalidExtensionNameException;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 use TYPO3\CMS\Fluid\View\StandaloneView;
@@ -33,7 +32,6 @@ use Psr\Log\LoggerAwareInterface;
 
 /**
  * Class NotificationsToolbarItem
- * @package PeterBenke\PbNotifications\Backend\ToolbarItems
  * @author Peter Benke <info@typomotor.de>
  */
 class NotificationsToolbarItem implements ToolbarItemInterface
@@ -52,17 +50,17 @@ class NotificationsToolbarItem implements ToolbarItemInterface
 	/**
 	 * @var ObjectManager
 	 */
-	protected $objectManager;
+	protected ObjectManager $objectManager;
 
 	/**
 	 * @var NotificationRepository
 	 */
-	protected $notificationRepository;
+	protected NotificationRepository $notificationRepository;
 
 	/**
 	 * @var string
 	 */
-	protected $extPath;
+	protected string $extPath;
 
 	/**
 	 * @var ObjectStorage<Notification>
@@ -139,12 +137,8 @@ class NotificationsToolbarItem implements ToolbarItemInterface
 
 		$this->standaloneView->setTemplatePathAndFilename($this->extPath . 'Resources/Private/Templates/ToolbarMenu/MenuItem.html');
 
-		try{
-			$request = $this->standaloneView->getRequest();
-			$request->setControllerExtensionName('pb_notifications');
-		}catch(InvalidExtensionNameException $e){
-			return $e->getMessage();
-		}
+		$request = $this->standaloneView->getRequest();
+		$request->setControllerExtensionName('pb_notifications');
 
 		$this->standaloneView->assign('notifications', $this->notifications);
 		$this->standaloneView->assignMultiple([
@@ -178,13 +172,8 @@ class NotificationsToolbarItem implements ToolbarItemInterface
 		}
 
 		$this->standaloneView->setTemplatePathAndFilename($this->extPath . 'Resources/Private/Templates/ToolbarMenu/DropDown.html');
-
-		try{
-			$request = $this->standaloneView->getRequest();
-			$request->setControllerExtensionName('pb_notifications');
-		}catch(InvalidExtensionNameException $e){
-			return $e->getMessage();
-		}
+		$request = $this->standaloneView->getRequest();
+		$request->setControllerExtensionName('pb_notifications');
 
 		$maxNumberOfNotificationsInToolbar = ExtensionConfigurationUtility::getMaxNumberOfNotificationsInToolbar();
 		if(!intval($maxNumberOfNotificationsInToolbar) > 0){

@@ -17,50 +17,49 @@ use DateTime;
 
 /**
  * Class Notification
- * @package PeterBenke\PbNotifications\Domain\Model
  * @author Peter Benke <info@typomotor.de>
  */
 class Notification extends AbstractEntity
 {
 
 	/**
-	 * @var DateTime
+	 * @var DateTime|null
 	 */
-	protected $date = null;
+	protected ?DateTime $date = null;
 
     /**
 	 * @Extbase\Validate("NotEmpty")
      * @var string
      */
-    protected $title = '';
+    protected string $title = '';
     
     /**
 	 * @Extbase\Validate("NotEmpty")
      * @var string
      */
-    protected $content = '';
+    protected string $content = '';
 
 	/**
-	 * @var ObjectStorage<FileReference>
+	 * @var ObjectStorage<FileReference>|null
 	 */
-	protected $images;
+	protected ?ObjectStorage $images;
 
     /**
 	 * @Extbase\Validate("NotEmpty")
      * @var int
      */
-    protected $type = 0;
+    protected int $type = 0;
 
 	/**
 	 * @var string
 	 */
-	protected $beGroups = '';
+	protected string $beGroups = '';
 
     /**
      * markedAsRead
-     * @var ObjectStorage<BackendUser>
+     * @var ObjectStorage<BackendUser>|null
      */
-    protected $markedAsRead = null;
+    protected ?ObjectStorage $markedAsRead = null;
     
     /**
      * __construct

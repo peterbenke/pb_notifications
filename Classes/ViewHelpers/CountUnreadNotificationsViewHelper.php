@@ -2,7 +2,7 @@
 namespace PeterBenke\PbNotifications\ViewHelpers;
 
 /**
- * PbNotifications
+ * PeterBenke
  */
 use PeterBenke\PbNotifications\Domain\Model\Notification;
 
@@ -25,7 +25,6 @@ use Closure;
 
 /**
  * Class CountUnreadNotificationsViewHelper
- * @package PeterBenke\PbNotifications\ViewHelpers
  * @author Peter Benke <info@typomotor.de>
  */
 class CountUnreadNotificationsViewHelper extends AbstractViewHelper
@@ -46,15 +45,9 @@ class CountUnreadNotificationsViewHelper extends AbstractViewHelper
 	 * @param RenderingContextInterface $renderingContext
 	 * @return int
 	 * @author Peter Benke <info@typomotor.de>
-	 * @author Sybille Peters <https://github.com/sypets>
 	 */
 	public static function renderStatic(array $arguments, Closure $renderChildrenClosure, RenderingContextInterface $renderingContext): int
 	{
-
-		/**
-		 * @var Notification $notification
-		 * @var BackendUser $beUserMarkedAsRead
-		 */
 
 		// Backend user id
 		$beUserId = $GLOBALS['BE_USER']->user['uid'];
@@ -62,11 +55,14 @@ class CountUnreadNotificationsViewHelper extends AbstractViewHelper
 		$unreadNotifications = 0;
 
 		if(isset($arguments['notifications'])){
+
+			/** @var Notification $notification */
 			foreach($arguments['notifications'] as $notification){
 
 				$markedAsReadObjects = $notification->getMarkedAsRead();
-				$markedAsRead = array();
+				$markedAsRead = [];
 
+				/** @var BackendUser $beUserMarkedAsRead */
 				foreach($markedAsReadObjects as $beUserMarkedAsRead){
 					$markedAsRead[] = $beUserMarkedAsRead->getUid();
 				}
