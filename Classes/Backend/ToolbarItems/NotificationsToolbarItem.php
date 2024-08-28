@@ -15,6 +15,7 @@ use TYPO3\CMS\Backend\Toolbar\ToolbarItemInterface;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Http\HtmlResponse;
 use TYPO3\CMS\Core\Imaging\IconFactory;
+use TYPO3\CMS\Core\Information\Typo3Version;
 use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
@@ -34,7 +35,7 @@ use Psr\Log\LoggerAwareInterface;
  * Class NotificationsToolbarItem
  * @author Peter Benke <info@typomotor.de>
  */
-class NotificationsToolbarItem implements ToolbarItemInterface
+class NotificationsToolbarItem implements ToolbarItemInterface, SingletonInterface
 {
 
 	/**
@@ -48,9 +49,25 @@ class NotificationsToolbarItem implements ToolbarItemInterface
 	protected $iconFactory;
 
 	/**
-	 * @var ObjectManager
+     * DONE
+     *
+     * breaking in v12, already deprecated in v11
+     *   Deprecation: #94619 - Extbase ObjectManager
+     *   12.0 Breaking: #96107 - Deprecated functionality removed
+     *
+     * The Extbase ObjectManager as the legacy core object lifecycle and
+     * dependency injection solution has been marked discouraged with TYPO3 v10 and
+     * its introduction of the Symfony based dependency injection solution already.
+     *
+     * TYPO3 v11 no longer uses the Extbase ObjectManager - only in a couple
+     * of places as fallback for third party extensions. The entire construct has now
+     * been marked as deprecated and will be removed with v12:
+     *
+     * Migration: Extensions still relying on Extbase ObjectManager are strongly encouraged to
+     * switch to :php:`\TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance()` and
+     * Symfony based DI instead.
 	 */
-	protected ObjectManager $objectManager;
+	//protected ObjectManager $objectManager;
 
 	/**
 	 * @var NotificationRepository
@@ -72,11 +89,14 @@ class NotificationsToolbarItem implements ToolbarItemInterface
 	 */
 	protected $onlyUnreadNotifications;
 
+    protected Typo3Version $typo3Version;
+
 	/**
 	 * @author Peter Benke <info@typomotor.de>
 	 */
-	public function __construct()
+	public function __construct(NotificationRepository $notificationRepository, Typo3Version $typo3Version)
 	{
+        $this->typo3Version = $typo3Version;
 
 		$this->extPath = ExtensionManagementUtility::extPath('pb_notifications');
 
@@ -93,8 +113,7 @@ class NotificationsToolbarItem implements ToolbarItemInterface
 		$this->getLanguageService()->includeLLFile('EXT:pb_notifications/Resources/Private/Language/locallang.xlf');
 
 		// Repository
-		$this->objectManager = GeneralUtility::makeInstance(ObjectManager::class);
-		$this->notificationRepository = $this->objectManager->get(NotificationRepository::class);
+		$this->notificationRepository = $notificationRepository;
 
 		// All Notifications
 		// $this->notifications = $this->notificationRepository->findAll();
@@ -137,8 +156,17 @@ class NotificationsToolbarItem implements ToolbarItemInterface
 
 		$this->standaloneView->setTemplatePathAndFilename($this->extPath . 'Resources/Private/Templates/ToolbarMenu/MenuItem.html');
 
-		$request = $this->standaloneView->getRequest();
-		$request->setControllerExtensionName('pb_notifications');
+        /**
+         * @todo v12
+         * Breaking: #98377 - Fluid StandaloneView does not create an Extbase Request anymore
+         * @see https://docs.typo3.org/c/typo3/cms-core/main/en-us/Changelog/12.0/Breaking-98377-FluidStandaloneViewDoesNotCreateAnExtbaseRequestAnymore.html
+         *
+         * In our efforts to further speed up, streamline and separate Fluid from Extbase, the \TYPO3\CMS\Fluid\View\StandaloneView  has been changed to no longer create an Extbase Request anymore.
+         */
+        if ($this->typo3Version->getMajorVersion() < 12) {
+            $request = $this->standaloneView->getRequest();
+            $request->setControllerExtensionName('pb_notifications');
+        }
 
 		$this->standaloneView->assign('notifications', $this->notifications);
 		$this->standaloneView->assignMultiple([
@@ -172,11 +200,18 @@ class NotificationsToolbarItem implements ToolbarItemInterface
 		}
 
 		$this->standaloneView->setTemplatePathAndFilename($this->extPath . 'Resources/Private/Templates/ToolbarMenu/DropDown.html');
-		$request = $this->standaloneView->getRequest();
-		$request->setControllerExtensionName('pb_notifications');
 
-		$maxNumberOfNotificationsInToolbar = ExtensionConfigurationUtility::getMaxNumberOfNotificationsInToolbar();
-		if(!intval($maxNumberOfNotificationsInToolbar) > 0){
+        /**
+         * @todo StandaloneView::getRequest() does not return an Extbase request anymore in v12. Do we need to set
+         * the setControllerExtensionName here?
+         */
+        if ($this->typo3Version->getMajorVersion() < 12) {
+            $request = $this->standaloneView->getRequest();
+            $request->setControllerExtensionName('pb_notifications');
+        }
+
+		$maxNumberOfNotificationsInToolbar = (int)ExtensionConfigurationUtility::getMaxNumberOfNotificationsInToolbar();
+		if(!($maxNumberOfNotificationsInToolbar > 0)){
 			$maxNumberOfNotificationsInToolbar = 1000;
 		}
 

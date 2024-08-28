@@ -15,6 +15,8 @@ use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
+ * @todo Only used for v11, remove when support for v11 is dropped, use event listener for \TYPO3\CMS\Backend\Controller\Event\AfterBackendPageRenderEvent instead
+ *
  * Class BackendHook
  * @author Peter Benke <info@typomotor.de>
  */

@@ -8,7 +8,10 @@ use PeterBenke\PbNotifications\Backend\ToolbarItems\NotificationsToolbarItem;
 /**
  * TYPO3
  */
+
+use TYPO3\CMS\Core\Information\Typo3Version;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
 
 
@@ -16,25 +19,53 @@ defined('TYPO3') or die();
 
 $boot = static function (): void {
 
-	ExtensionManagementUtility::addLLrefForTCAdescr('tx_pbnotifications_domain_model_notification', 'EXT:pb_notifications/Resources/Private/Language/locallang_csh_tx_pbnotifications_domain_model_notification.xlf');
-	ExtensionManagementUtility::allowTableOnStandardPages('tx_pbnotifications_domain_model_notification');
+    /**
+     * @todo: addLLrefForTCAdescr is deprecated in v12
+     *   Deprecation: #97312 - Deprecate CSH-related methods
+     */
+    ExtensionManagementUtility::addLLrefForTCAdescr('tx_pbnotifications_domain_model_notification', 'EXT:pb_notifications/Resources/Private/Language/locallang_csh_tx_pbnotifications_domain_model_notification.xlf');
 
-	// Register the backend module
-	ExtensionUtility::registerModule(
-		'pb_notifications',
-		'user',     // Make module a submodule of 'user'
-		'notifications',    // Submodule key
-		'',                        // Position
-		[
-			\PeterBenke\PbNotifications\Controller\NotificationController::class => 'list, show, markAsRead, markAsUnread',
-		],
-		[
-			'access' => 'user,group',
-			'icon' => 'EXT:pb_notifications/Resources/Public/Icons/bell-orange.svg',
-			'labels' => 'LLL:EXT:pb_notifications/Resources/Private/Language/locallang.xlf:module.notifications.title',
-		]
-	);
+    /**
+     * @todo Replace once support for v11 is dropped
+     *
+     * deprecated in v12: The API method :php:`ExtensionManagementUtility::allowTableOnStandardPages` which
+     * was used in `ext_tables.php` files of extensions registering custom records available
+     * on any page type has been marked as deprecated.
+     *
+     * see
+     *  12.0 Breaking: #98487 - $GLOBALS['PAGES_TYPES'] removed
+     *  12.0 Deprecation: #98487 - ExtensionManagementUtility::allowTableOnStandardPages
+     *  12.0 Feature: #98487 - TCA option [ctrl][security][ignorePageTypeRestriction]
+     */
+    ExtensionManagementUtility::allowTableOnStandardPages('tx_pbnotifications_domain_model_notification');
 
+    /** @var Typo3Version $typoVersion */
+    $typoVersion = GeneralUtility::makeInstance(Typo3Version::class);
+
+    if ($typoVersion->getMajorVersion() < 12) {
+
+        /**
+         * DONE (see Configuration/Modules.php for v12)
+         *
+         * Register the backend module
+         * breaking in v12 (remove):
+         *   12.0  Breaking: #96733 - Removed support for module handling based on TBE_MODULES
+         */
+        ExtensionUtility::registerModule(
+            'pb_notifications',
+            'user',     // Make module a submodule of 'user'
+            'notifications',    // Submodule key
+            '',                        // Position
+            [
+                \PeterBenke\PbNotifications\Controller\NotificationController::class => 'list, show, markAsRead, markAsUnread',
+            ],
+            [
+                'access' => 'user,group',
+                'icon' => 'EXT:pb_notifications/Resources/Public/Icons/bell-orange.svg',
+                'labels' => 'LLL:EXT:pb_notifications/Resources/Private/Language/locallang.xlf:module.notifications.title',
+            ]
+        );
+    }
 
 	/*
 

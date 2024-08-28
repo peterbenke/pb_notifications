@@ -12,6 +12,7 @@ use PeterBenke\PbNotifications\Utility\ExtensionConfigurationUtility;
  */
 use TYPO3\CMS\Beuser\Domain\Model\BackendUser;
 use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Core\Information\Typo3Version;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Persistence\Generic\Typo3QuerySettings;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
@@ -31,6 +32,15 @@ use Doctrine\DBAL\Driver\Exception as DoctrineDBALDriverException;
  */
 class NotificationRepository extends Repository
 {
+    protected Typo3QuerySettings $querySettings;
+    protected Typo3Version $typo3Version;
+    public function __construct(Typo3QuerySettings $typo3QuerySettings, Typo3Version $typo3Version)
+    {
+        $this->querySettings = $typo3QuerySettings;
+        $this->typo3Version = $typo3Version;
+        parent::__construct();
+    }
+
 
 	/**
 	 * Initialize
@@ -38,32 +48,48 @@ class NotificationRepository extends Repository
 	 */
 	public function initializeObject()
 	{
-
-		/** @var Typo3QuerySettings $querySettings */
-		$querySettings = $this->objectManager->get(Typo3QuerySettings::class);
-		$notificationsStoragePid = ExtensionConfigurationUtility::getNotificationsStoragePid();
+		$notificationsStoragePid = (int)ExtensionConfigurationUtility::getNotificationsStoragePid();
 
 		// If storage pid is set
-		if(intval($notificationsStoragePid) > 0){
-			$querySettings->setStoragePageIds([$notificationsStoragePid]);
+		if($notificationsStoragePid > 0){
+			$this->querySettings->setStoragePageIds([$notificationsStoragePid]);
 		// No storage pid is set => don't respect the storage pid
 		}else{
-			$querySettings->setRespectStoragePage(false);
+			$this->querySettings->setRespectStoragePage(false);
 		}
 
 		// Get all notifications in the users current language or language = -1
-        $querySettings
-			->setRespectSysLanguage(true)
-			->setLanguageMode('content_fallback');
+        $this->querySettings
+			->setRespectSysLanguage(true);
+
+        /** @var Typo3Version $typoVersion */
+        $typoVersion = GeneralUtility::makeInstance(Typo3Version::class);
+        if ($typoVersion->getMajorVersion() < 12) {
+            /**
+             * DONE
+             * deprecated in v11, can be removed entirely
+             *   11.0  Deprecation: #89938 - Language mode in Typo3QuerySettings
+             * The following methods have been marked as deprecated and will be removed in TYPO3 v12.
+             *
+             * - :php:`\TYPO3\CMS\Extbase\Persistence\Generic\Typo3QuerySettings::setLanguageMode()`
+             * - :php:`\TYPO3\CMS\Extbase\Persistence\Generic\Typo3QuerySettings::getLanguageMode()`
+             *
+             * The deprecated methods have been used in combination with the non consistent translation handling of
+             * Extbase. As that handling mode disappeared, there is no need to migrate these method calls and just
+             * stop calling those instead.
+             */
+             $this->querySettings
+                ->setLanguageMode('content_fallback');
+        }
 
         $uc = $GLOBALS['BE_USER']->uc;
 		$langUid = $this->getLanguageUidForIsoCode($uc['lang'] ?? '');
 
 		if($langUid) {
-			$querySettings->setLanguageUid($langUid);
+			$this->querySettings->setLanguageUid($langUid);
 		}
 
-        $this->setDefaultQuerySettings($querySettings);
+        $this->setDefaultQuerySettings($this->querySettings);
 
 	}
 
@@ -77,6 +103,15 @@ class NotificationRepository extends Repository
 	{
 		$query = $this->createQuery();
 		$query->setOrderings($ordering);
+
+        /*
+        // test
+        $queryParser = GeneralUtility::makeInstance(\TYPO3\CMS\Extbase\Persistence\Generic\Storage\Typo3DbQueryParser::class);
+        $sql = $queryParser->convertQueryToDoctrineQueryBuilder($query)->getSQL();
+        $parameters = $queryParser->convertQueryToDoctrineQueryBuilder($query)->getParameters();
+        */
+
+
 		return $query->execute();
 		// $queryParser = $this->objectManager->get(\TYPO3\CMS\Extbase\Persistence\Generic\Storage\Typo3DbQueryParser::class);
 		// \TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($queryParser->convertQueryToDoctrineQueryBuilder($query)->getSQL());
@@ -106,7 +141,11 @@ class NotificationRepository extends Repository
 
 
 		// Create object storage
-		$notificationsReturn = $this->objectManager->get(ObjectStorage::class);
+        if ($this->typo3Version->getMajorVersion() < 12) {
+            $notificationsReturn = $this->objectManager->get(ObjectStorage::class);
+        } else {
+            $notificationsReturn = GeneralUtility::makeInstance(ObjectStorage::class);
+        }
 
 		// Loop through all notifications
 		foreach($notifications as $notification){
@@ -156,7 +195,11 @@ class NotificationRepository extends Repository
 		$beUserId = $GLOBALS['BE_USER']->user['uid'];
 
 		// Create object storage
-		$notificationsReturn = $this->objectManager->get(ObjectStorage::class);
+        if ($this->typo3Version->getMajorVersion() < 12) {
+            $notificationsReturn = $this->objectManager->get(ObjectStorage::class);
+        } else {
+            $notificationsReturn = GeneralUtility::makeInstance(ObjectStorage::class);
+        }
 
 		// Loop through all notifications
 		foreach($notifications as $notification){
@@ -229,7 +272,11 @@ class NotificationRepository extends Repository
 		$beUserId = $GLOBALS['BE_USER']->user['uid'];
 
 		// Create object storage
-		$notificationsReturn = $this->objectManager->get(ObjectStorage::class);
+        if ($this->typo3Version->getMajorVersion() < 12) {
+            $notificationsReturn = $this->objectManager->get(ObjectStorage::class);
+        } else {
+            $notificationsReturn = GeneralUtility::makeInstance(ObjectStorage::class);
+        }
 
 		// Loop through all notifications
 		foreach($notifications as $notification){

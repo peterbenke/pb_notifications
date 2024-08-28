@@ -140,6 +140,9 @@ return [
         'images' => [
             'exclude' => 1,
             'label' => 'LLL:EXT:pb_notifications/Resources/Private/Language/locallang_db.xlf:tx_pbnotifications_domain_model_notification.images',
+            /**
+             * @todo getFileFieldTCAConfig is deprecated in v12
+             */
             'config' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::getFileFieldTCAConfig(
                 'images',
                 [

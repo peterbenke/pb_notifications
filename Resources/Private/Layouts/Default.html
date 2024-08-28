@@ -1,42 +1,29 @@
-<f:be.container includeCssFiles="{0: '{f:uri.resource(path:\'Css/notifications.css\')}', 1: '{f:uri.resource(path:\'Css/prettyPhoto.css\')}'}" includeJsFiles="{0: '{f:uri.resource(path:\'JavaScript/List/jquery-3.6.0.min.js\')}', 1: '{f:uri.resource(path:\'JavaScript/List/jquery.prettyPhoto-manipulated.js\')}', 2: '{f:uri.resource(path:\'JavaScript/List/notifications.js\')}'}">
-	<div class="typo3-fullDoc">
-		<div id="typo3-docheader">
+<f:comment>
+    added in Controller as module:
+    0: 'EXT:pb_notifications/Resources/Public/JavaScript/List/jquery.prettyPhoto-manipulated.js
 
-			<div class="typo3-docheader-functions">
-				<div class="left">
-					<f:comment>
-						<!--
-						<f:be.buttons.csh />
-						<f:be.menus.actionMenu>
-							<f:be.menus.actionMenuItem label="Overview" controller="" action="list" />
-							<f:be.menus.actionMenuItem label="Create new Tool" action="new" controller="Tool" />
-						</f:be.menus.actionMenu>
-						-->
-					</f:comment>
-				</div>
-				<div class="right">
-					<f:be.pagePath />
-					<f:be.pageInfo />
-				</div>
-			</div>
+    todo: this should be loaded as module as well (or used other method to make jquery available, is currently not loaded
+    1: 'EXT:pb_notifications/Resources/Public/JavaScript/List/notifications.js'
+</f:comment>
+<f:be.pageRenderer
+    includeCssFiles="{0: 'EXT:pb_notifications/Resources/Public/Css/notifications.css', 1: 'EXT:pb_notifications/Resources/Public/Css/prettyPhoto.css'}"
+/>
+<div class="typo3-fullDoc">
+    <div id="typo3-docheader">
 
-			<f:comment>
-				<!--
-							<div class="typo3-docheader-buttons">
-								<div class="left">
-								</div>
-								<div class="right">
-									<f:be.buttons.shortcut />
-								</div>
-							</div>
-				-->
-			</f:comment>
+        <div class="typo3-docheader-functions">
+            <div class="left">
+            </div>
+            <div class="right">
+                <f:be.pagePath />
+                <f:be.pageInfo />
+            </div>
+        </div>
 
-		</div>
-		<div id="typo3-docbody">
-			<div id="typo3-inner-docbody" class="tx_pb-notifications">
-				<f:render section="content" />
-			</div>
-		</div>
-	</div>
-</f:be.container>
+    </div>
+    <div id="typo3-docbody">
+        <div id="typo3-inner-docbody" class="tx_pb-notifications">
+            <f:render section="content" />
+        </div>
+    </div>
+</div>

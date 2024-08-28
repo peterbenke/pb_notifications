@@ -3,7 +3,7 @@
 
 <f:section name="content">
 
-	<h1><f:translate key="notifications.list.headline" /> <f:translate key="notifications.list.headline.for" /> {f:if(condition:'{user.realName}', then: '{user.realName}', else: '{user.username}')}</h1>
+	<h1><f:translate key="LLL:EXT:pb_notifications/Resources/Private/Language/locallang.xlf:notifications.list.headline" /> <f:translate key="LLL:EXT:pb_notifications/Resources/Private/Language/locallang.xlf:notifications.list.headline.for" /> {f:if(condition:'{user.realName}', then: '{user.realName}', else: '{user.username}')}</h1>
 
 	<f:if condition="{notifications}">
 
@@ -20,7 +20,7 @@
 								</span>
 							</span>
 						</span>
-								<span><f:format.date date="{notification.date}" format="{f:translate(key:'notifications.list.dateFormat')}" /></span>
+								<span><f:format.date date="{notification.date}" format="{f:translate(key:'LLL:EXT:pb_notifications/Resources/Private/Language/locallang.xlf:notifications.list.dateFormat')}" /></span>
 							</div>
 							<div class="panel-body">
 								<h2>{notification.title}</h2>
@@ -45,10 +45,10 @@
 
 						<pb:ifMarkedAsRead markedAsRead="{notification.markedAsRead}">
 							<f:then>
-								<f:link.action class="btn btn-warning" action="markAsUnread" arguments="{uid:notification.uid}"><i class="fa fa-close"></i> <f:translate key="notifications.list.markAsUnread" /></f:link.action>
+								<f:link.action class="btn btn-warning" action="markAsUnread" arguments="{uid:notification.uid}"><i class="fa fa-close"></i> <f:translate key="LLL:EXT:pb_notifications/Resources/Private/Language/locallang.xlf:notifications.list.markAsUnread" /></f:link.action>
 							</f:then>
 							<f:else>
-								<f:link.action class="btn btn-success" action="markAsRead" arguments="{uid:notification.uid}"><i class="fa fa-check"></i> <f:translate key="notifications.list.gotit" /></f:link.action>
+								<f:link.action class="btn btn-success" action="markAsRead" arguments="{uid:notification.uid}"><i class="fa fa-check"></i> <f:translate key="LLL:EXT:pb_notifications/Resources/Private/Language/locallang.xlf:notifications.list.gotit" /></f:link.action>
 							</f:else>
 						</pb:ifMarkedAsRead>
 
@@ -62,7 +62,7 @@
 
 		<f:else>
 			<div class="alert alert-warning">
-				<i class="fa fa-info"></i> <f:translate key="notifications.list.noNotifications" />
+				<i class="fa fa-info"></i> <f:translate key="LLL:EXT:pb_notifications/Resources/Private/Language/locallang.xlf:notifications.list.noNotifications" />
 			</div>
 		</f:else>
 

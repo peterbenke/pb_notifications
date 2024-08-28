@@ -19,10 +19,10 @@
             <li class="page-item previous">
                 <f:if condition="{pagination.previousPage} > 1">
                     <f:then>
-                        <f:link.action class="page-link" arguments="{currentPage: pagination.previousPage}" addQueryStringMethod="{configuration.addQueryStringMethod}" section="{configuration.section}"><f:translate key="widget.pagination.previous" /></f:link.action>
+                        <f:link.action class="page-link" arguments="{currentPage: pagination.previousPage}" addQueryStringMethod="{configuration.addQueryStringMethod}" section="{configuration.section}"><f:translate key="LLL:EXT:pb_notifications/Resources/Private/Language/locallang.xlf:widget.pagination.previous" /></f:link.action>
                     </f:then>
                     <f:else>
-                        <f:link.action class="page-link" addQueryStringMethod="{configuration.addQueryStringMethod}" section="{configuration.section}"><i class="fa fa-angle-left"></i>&nbsp;<f:translate key="widget.pagination.previous" /></f:link.action>
+                        <f:link.action class="page-link" addQueryStringMethod="{configuration.addQueryStringMethod}" section="{configuration.section}"><i class="fa fa-angle-left"></i>&nbsp;<f:translate key="LLL:EXT:pb_notifications/Resources/Private/Language/locallang.xlf:widget.pagination.previous" /></f:link.action>
                     </f:else>
                 </f:if>
             </li>
@@ -66,7 +66,7 @@
         </f:if>
         <f:if condition="{pagination.nextPage}">
             <li class="page-item next">
-                <f:link.action class="page-link" arguments="{currentPage: pagination.nextPage}" addQueryStringMethod="{configuration.addQueryStringMethod}" section="{configuration.section}"><f:translate key="widget.pagination.next" />&nbsp;<i class="fa fa-angle-right"></i></f:link.action>
+                <f:link.action class="page-link" arguments="{currentPage: pagination.nextPage}" addQueryStringMethod="{configuration.addQueryStringMethod}" section="{configuration.section}"><f:translate key="LLL:EXT:pb_notifications/Resources/Private/Language/locallang.xlf:widget.pagination.next" />&nbsp;<i class="fa fa-angle-right"></i></f:link.action>
             </li>
         </f:if>
     </ul>

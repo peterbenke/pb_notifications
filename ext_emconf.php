@@ -7,10 +7,10 @@ $EM_CONF[$_EXTKEY] = [
 	'author' => 'Peter Benke',
 	'author_email' => 'info@typomotor.de',
 	'state' => 'stable',
-	'version' => '11.5.1',
+	'version' => '12.0.0-dev',
 	'constraints' => [
 		'depends' => [
-			'typo3' => '11.5.0-11.5.99',
+			'typo3' => '12.4.19-12.4.99',
 		],
 		'conflicts' => [],
 		'suggests' => [],

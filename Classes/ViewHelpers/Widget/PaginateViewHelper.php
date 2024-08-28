@@ -159,10 +159,35 @@ class PaginateViewHelper extends AbstractViewHelper
      */
     protected static function getPageNumber(RenderingContextInterface $renderingContext): int
     {
-        $extensionName = $renderingContext->getControllerContext()->getRequest()->getControllerExtensionName();
-        $pluginName = $renderingContext->getControllerContext()->getRequest()->getPluginName();
+        /**
+         * @todo ControllerContext is deprecated in v11 and removed in v12
+         *
+         * 11.5 Deprecation: #95139 - Extbase ControllerContext
+         *   https://docs.typo3.org/c/typo3/cms-core/main/en-us/Changelog/11.5/Deprecation-95139-ExtbaseControllerContext.html
+         * 12.0 Breaking: #96107 - Deprecated functionality removed
+         *
+         * Migration:
+         * - Method getRequest() is available in controllers directly, and view-helpers receive the current request by calling RenderingContext->getRequest().
+         */
+        $request = null;
+        if (method_exists($renderingContext, 'getRequest')) {
+            $request = $renderingContext->getRequest();
+        }
+
+        if (!$request) {
+            return 0;
+        }
+
+        $extensionName = $request->getControllerExtensionName();
+        $pluginName = $request->getPluginName();
         $extensionService = GeneralUtility::makeInstance(ExtensionService::class);
         $pluginNamespace = $extensionService->getPluginNamespace($extensionName, $pluginName);
+
+        /**
+         * @todo _GP is deprecated in v12
+         *
+         *   Deprecation: #100053 - GeneralUtility::_GP()
+         */
         $variables = GeneralUtility::_GP($pluginNamespace);
         if ($variables !== null) {
             if (!empty($variables['currentPage'])) {

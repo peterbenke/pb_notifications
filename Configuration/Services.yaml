@@ -1,0 +1,14 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+
+  PeterBenke\PbNotifications\:
+    resource: '../Classes/*'
+
+  # event listeners
+  PeterBenke\PbNotifications\EventListener\AfterBackendPageRenderEventListener:
+    tags:
+      - name: event.listener
+        identifier: 'pb_notifications/backend/after-backend-page-render'
