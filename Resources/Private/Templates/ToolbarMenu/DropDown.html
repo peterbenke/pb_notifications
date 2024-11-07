@@ -33,11 +33,10 @@
                            data-dispatch-action="TYPO3.ModuleMenu.showModule"
                            data-dispatch-args-list="user_PbNotificationsNotifications"
                             >
-
-                                <f:if condition="{notification.type} == 1">
+                               <f:if condition="{notification.type} == 1">
                                     <f:then>
                                     <span class="text-danger">
-                                        <i class="fa fa-exclamation"></i>&nbsp;
+                                        <core:icon identifier="actions-exclamation-circle-alt"/>&nbsp;
                                         <f:format.date date="{notification.date}" format="{f:translate(key:'LLL:EXT:pb_notifications/Resources/Private/Language/locallang.xlf:notifications.list.dateFormat')}" />
                                         <br>
                                         <strong>{notification.title}</strong>:
@@ -45,7 +44,7 @@
                                     </f:then>
                                     <f:else>
                                     <span class="text-primary">
-                                        <i class="fa fa-info"></i>&nbsp;
+                                        <core:icon identifier="actions-info-circle"/>&nbsp;
                                         <f:format.date date="{notification.date}" format="{f:translate(key:'LLL:EXT:pb_notifications/Resources/Private/Language/locallang.xlf:notifications.list.dateFormat')}" />
                                         <br>
                                         <strong>{notification.title}</strong>:
