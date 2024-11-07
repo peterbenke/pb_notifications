@@ -25,20 +25,6 @@ $boot = static function (): void {
      */
     ExtensionManagementUtility::addLLrefForTCAdescr('tx_pbnotifications_domain_model_notification', 'EXT:pb_notifications/Resources/Private/Language/locallang_csh_tx_pbnotifications_domain_model_notification.xlf');
 
-    /**
-     * @todo Replace once support for v11 is dropped
-     *
-     * deprecated in v12: The API method :php:`ExtensionManagementUtility::allowTableOnStandardPages` which
-     * was used in `ext_tables.php` files of extensions registering custom records available
-     * on any page type has been marked as deprecated.
-     *
-     * see
-     *  12.0 Breaking: #98487 - $GLOBALS['PAGES_TYPES'] removed
-     *  12.0 Deprecation: #98487 - ExtensionManagementUtility::allowTableOnStandardPages
-     *  12.0 Feature: #98487 - TCA option [ctrl][security][ignorePageTypeRestriction]
-     */
-    ExtensionManagementUtility::allowTableOnStandardPages('tx_pbnotifications_domain_model_notification');
-
     /** @var Typo3Version $typoVersion */
     $typoVersion = GeneralUtility::makeInstance(Typo3Version::class);
 
