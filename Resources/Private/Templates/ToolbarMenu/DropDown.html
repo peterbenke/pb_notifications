@@ -1,8 +1,25 @@
 {namespace pb=PeterBenke\PbNotifications\ViewHelpers}
 
-<h3 class="dropdown-headline"><f:translate key="LLL:EXT:pb_notifications/Resources/Private/Language/locallang.xlf:toolbaritem.title" /></h3>
+<f:comment>
+    Since TYPO3 v12 use:
 
-<ul class="dropdown-list" style="width:250px;">
+    headline: p class="h3 dropdown-headline"
+    divider: hr class="dropdown-divider" aria-hidden="true"
+    items:
+      - ul class="dropdown-list">
+        - li
+           - a class="dropdown-item"
+              - span class="dropdown-item-columns"
+                 - span class="dropdown-item-column"
+                   - icon: span class="t3js-icon icon icon-size-small icon-state-default
+                   - header: class="dropdown-item-column dropdown-item-column-title"
+</f:comment>
+
+<p class="h3 dropdown-headline"><f:translate key="LLL:EXT:pb_notifications/Resources/Private/Language/locallang.xlf:toolbaritem.title" /></p>
+<hr class="dropdown-divider" aria-hidden="true">
+
+
+<ul class="dropdown-list">
 
 	<f:if condition="{onlyUnreadNotifications -> f:count()} > 0">
 
@@ -11,31 +28,35 @@
 			<f:for each="{onlyUnreadNotifications}" as="notification" iteration="iteration">
 
 				<f:if condition="{iteration.index} < {maxNumberOfNotificationsInToolbar}">
-
-					<li class="divider"></li>
 					<li>
-						<f:if condition="{notification.type} == 1">
-							<f:then>
-							<span class="text-danger">
-								<i class="fa fa-exclamation"></i>&nbsp;
-								<f:format.date date="{notification.date}" format="{f:translate(key:'LLL:EXT:pb_notifications/Resources/Private/Language/locallang.xlf:notifications.list.dateFormat')}" />
-								<br>
-								<strong>{notification.title}</strong>:
-							</span>
-							</f:then>
-							<f:else>
-							<span class="text-primary">
-								<i class="fa fa-info"></i>&nbsp;
-								<f:format.date date="{notification.date}" format="{f:translate(key:'LLL:EXT:pb_notifications/Resources/Private/Language/locallang.xlf:notifications.list.dateFormat')}" />
-								<br>
-								<strong>{notification.title}</strong>:
-							</span>
-							</f:else>
-						</f:if>
-						<br>
-						<f:format.crop maxCharacters="45" respectWordBoundaries="false">
-							{notification.content -> f:format.stripTags()}
-						</f:format.crop>
+                        <a href="#" class="dropdown-item"
+                           data-dispatch-action="TYPO3.ModuleMenu.showModule"
+                           data-dispatch-args-list="user_PbNotificationsNotifications"
+                            >
+
+                                <f:if condition="{notification.type} == 1">
+                                    <f:then>
+                                    <span class="text-danger">
+                                        <i class="fa fa-exclamation"></i>&nbsp;
+                                        <f:format.date date="{notification.date}" format="{f:translate(key:'LLL:EXT:pb_notifications/Resources/Private/Language/locallang.xlf:notifications.list.dateFormat')}" />
+                                        <br>
+                                        <strong>{notification.title}</strong>:
+                                    </span>
+                                    </f:then>
+                                    <f:else>
+                                    <span class="text-primary">
+                                        <i class="fa fa-info"></i>&nbsp;
+                                        <f:format.date date="{notification.date}" format="{f:translate(key:'LLL:EXT:pb_notifications/Resources/Private/Language/locallang.xlf:notifications.list.dateFormat')}" />
+                                        <br>
+                                        <strong>{notification.title}</strong>:
+                                    </span>
+                                    </f:else>
+                                </f:if>
+                                <f:format.crop maxCharacters="45" respectWordBoundaries="false">
+                                    {notification.content -> f:format.stripTags()}
+                                </f:format.crop>
+
+                        </a>
 					</li>
 
 				</f:if>
@@ -43,8 +64,6 @@
 			</f:for>
 
 			<f:if condition="{pb:countUnreadNotifications(notifications:'{onlyUnreadNotifications}')} > {maxNumberOfNotificationsInToolbar}">
-
-				<li class="divider"></li>
 				<li><em><f:translate key="LLL:EXT:pb_notifications/Resources/Private/Language/locallang.xlf:toolbaritem.andMore" /></em></li>
 
 			</f:if>
@@ -57,17 +76,17 @@
 		</f:else>
 
 	</f:if>
+</ul>
 
+<hr class="dropdown-divider" aria-hidden="true">
 
-	<li class="divider"></li>
-
-	<li id="pbnotifications_listnotifications">
-		<a href="#"
+<ul class="dropdown-list">
+    <li id="pbnotifications_listnotifications">
+        <a href="#" class="dropdown-item"
            data-dispatch-action="TYPO3.ModuleMenu.showModule"
            data-dispatch-args-list="user_PbNotificationsNotifications"
-           >
-			<span class="text-warning"><i class="fa fa-list"></i>&nbsp; <f:translate key="toolbaritem.allNotifications" extensionName="pb_notifications" /></span>
-		</a>
-	</li>
-
+        >
+            <span class="text-warning"><i class="fa fa-list"></i>&nbsp; <f:translate key="toolbaritem.allNotifications" extensionName="pb_notifications" /></span>
+        </a>
+    </li>
 </ul>
