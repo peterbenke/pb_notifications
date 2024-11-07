@@ -22,21 +22,6 @@ $boot = static function (): void {
     $typoVersion = GeneralUtility::makeInstance(Typo3Version::class);
     if ($typoVersion->getMajorVersion() < 12) {
 
-        // Toolbar
-        // -----------------------------------------------------------------------------------------------------------------
-
-        /**
-         * DONE
-         * Should be ok for v12 with autoconfigure in Services.yaml
-         *
-         * breaking in v12: (remove)
-         *  12.0 Breaking: #96041 - Toolbar items: Register by tag
-         *
-         * Remove $GLOBALS['TYPO3_CONF_VARS']['BE']['toolbarItems']  from your ext_localconf.php file. If autoconfigure is not enabled in your Configuration/Services.(yaml|php), add the tag backend.toolbar.item to your toolbar item class.
-         */
-        $GLOBALS['TYPO3_CONF_VARS']['BE']['toolbarItems'][1481194871] = NotificationsToolbarItem::class;
-
-
         // Reminder after login
         // -----------------------------------------------------------------------------------------------------------------
 
