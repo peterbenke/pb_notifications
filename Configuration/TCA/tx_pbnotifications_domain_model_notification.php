@@ -20,8 +20,7 @@ return [
         'searchFields' => 'title,content,type,marked_as_read,',
         'iconfile' => 'EXT:pb_notifications/Resources/Public/Icons/tx_pbnotifications_domain_model_notification.svg',
         'security' => [
-            'ignorePageTypeRestriction' => true,
-            ],
+                'ignorePageTypeRestriction' => true,
         ],
     ],
     'types' => [
