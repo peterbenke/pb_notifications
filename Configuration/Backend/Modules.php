@@ -5,8 +5,7 @@ return [
     'user_PbNotificationsNotifications' => [
         // Make module a submodule of 'user'
         'parent' => 'user',
-        'position' => ['after' => 'web_info'],
-        'access' => 'use,group',
+        'access' => 'user',
         'workspaces' => 'live',
         'iconIdentifier' => 'tx-pb_notifications-module',
         'path' => '/module/user/notifications',
