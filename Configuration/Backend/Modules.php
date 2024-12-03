@@ -10,7 +10,7 @@ return [
     'user_pb_notificationsNotifications' => [
         'parent' => 'user',
         'access' => 'user',
-        'iconIdentifier' => null,
+        'iconIdentifier' => 'pb-notifications-module',
         'labels' => 'LLL:EXT:pb_notifications/Resources/Private/Language/locallang.xlf:module.notifications.title',
         'extensionName' => 'PbNotifications',
         'controllerActions' => [

@@ -10,6 +10,7 @@ use TYPO3\CMS\Core\Imaging\IconProvider\SvgIconProvider;
  */
 
 $icons = [
+    'pb-notifications-module' => 'pb-notifications-module.svg',
     'apps-pagetree-folder-contains-pb_notifications' => 'ext-pb_notifications-folder-tree.svg',
     'pb-notifications-toolbar-menu' => 'bell-white.svg',
     'pb-notifications-toolbar-menu-alert' => 'bell-orange.svg',
