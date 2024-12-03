@@ -3,19 +3,20 @@
     "type": "typo3-cms-extension",
     "description": "Notifications for TYPO3 backend",
     "keywords": ["TYPO3", "extension", "backend", "notifications"],
-    "homepage": "http://www.typomotor.de",
+    "homepage": "https://www.typomotor.de",
     "authors": [
         {
             "name": "Peter Benke",
             "role": "Developer",
-            "homepage": "http://www.typomotor.de"
+            "homepage": "https://www.typomotor.de"
         }
     ],
     "license": [
-        "GPL-2.0+"
+        "GPL-2.0-or-later"
     ],
     "require": {
-        "typo3/cms-core": "^11.5"
+        "typo3/cms-core": "^12.4",
+        "friendsoftypo3/fontawesome-provider": "^1.0"
     },
     "autoload": {
         "psr-4": {

@@ -1,26 +1,31 @@
 <?php
+
 namespace PeterBenke\PbNotifications\ViewHelpers;
 
 /**
- * PeterBenke
+ * PbNotifications
  */
+
 use PeterBenke\PbNotifications\Domain\Model\Notification;
 
 /**
  * TYPO3Fluid
  */
+
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 /**
  * TYPO3
  */
+
 use TYPO3\CMS\Beuser\Domain\Model\BackendUser;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 
 /**
  * Php
  */
+
 use Closure;
 
 /**
@@ -30,54 +35,53 @@ use Closure;
 class CountUnreadNotificationsViewHelper extends AbstractViewHelper
 {
 
-	/**
-	 * Initialize
-	 * @author Peter Benke <info@typomotor.de>
-	 */
-	public function initializeArguments()
-	{
-		$this->registerArgument('notifications', ObjectStorage::class, 'Notifications', false);
-	}
+    /**
+     * Initialize
+     * @return void
+     */
+    public function initializeArguments(): void
+    {
+        $this->registerArgument('notifications', ObjectStorage::class, 'Notifications', false);
+    }
 
-	/**
-	 * @param array $arguments
-	 * @param Closure $renderChildrenClosure
-	 * @param RenderingContextInterface $renderingContext
-	 * @return int
-	 * @author Peter Benke <info@typomotor.de>
-	 */
-	public static function renderStatic(array $arguments, Closure $renderChildrenClosure, RenderingContextInterface $renderingContext): int
-	{
+    /**
+     * @param array $arguments
+     * @param Closure $renderChildrenClosure
+     * @param RenderingContextInterface $renderingContext
+     * @return int
+     */
+    public static function renderStatic(array $arguments, Closure $renderChildrenClosure, RenderingContextInterface $renderingContext): int
+    {
 
-		// Backend user id
-		$beUserId = $GLOBALS['BE_USER']->user['uid'];
+        // Backend user id
+        $beUserId = $GLOBALS['BE_USER']->user['uid'];
 
-		$unreadNotifications = 0;
+        $unreadNotifications = 0;
 
-		if(isset($arguments['notifications'])){
+        if (isset($arguments['notifications'])) {
 
-			/** @var Notification $notification */
-			foreach($arguments['notifications'] as $notification){
+            /** @var Notification $notification */
+            foreach ($arguments['notifications'] as $notification) {
 
-				$markedAsReadObjects = $notification->getMarkedAsRead();
-				$markedAsRead = [];
+                $markedAsReadObjects = $notification->getMarkedAsRead();
+                $markedAsRead = [];
 
-				/** @var BackendUser $beUserMarkedAsRead */
-				foreach($markedAsReadObjects as $beUserMarkedAsRead){
-					$markedAsRead[] = $beUserMarkedAsRead->getUid();
-				}
+                /** @var BackendUser $beUserMarkedAsRead */
+                foreach ($markedAsReadObjects as $beUserMarkedAsRead) {
+                    $markedAsRead[] = $beUserMarkedAsRead->getUid();
+                }
 
-				// Unread notification
-				if(!in_array($beUserId, $markedAsRead)){
-					$unreadNotifications++;
-				}
+                // Unread notification
+                if (!in_array($beUserId, $markedAsRead)) {
+                    $unreadNotifications++;
+                }
 
-			}
+            }
 
-		}
+        }
 
-		return $unreadNotifications;
+        return $unreadNotifications;
 
-	}
+    }
 
 }

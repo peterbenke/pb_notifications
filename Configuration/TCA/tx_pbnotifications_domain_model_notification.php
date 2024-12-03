@@ -1,11 +1,13 @@
 <?php
-return [
+
+$ll = 'LLL:EXT:pb_notifications/Resources/Private/Language/locallang_db.xlf:';
+
+$tx_pb_notifications_domain_model_notification = [
     'ctrl' => [
-        'title'	=> 'LLL:EXT:pb_notifications/Resources/Private/Language/locallang_db.xlf:tx_pbnotifications_domain_model_notification',
+        'title'	=> $ll . 'tx_pbnotifications_domain_model_notification',
         'label' => 'title',
         'tstamp' => 'tstamp',
         'crdate' => 'crdate',
-        'cruser_id' => 'cruser_id',
         'versioningWS' => true,
 
         'languageField' => 'sys_language_uid',
@@ -19,6 +21,9 @@ return [
 		],
         'searchFields' => 'title,content,type,marked_as_read,',
         'iconfile' => 'EXT:pb_notifications/Resources/Public/Icons/tx_pbnotifications_domain_model_notification.svg',
+        'security' => [
+            'ignorePageTypeRestriction' => true,
+        ],
     ],
     'types' => [
         '1' => [
@@ -44,8 +49,8 @@ return [
                 'renderType' => 'selectSingle',
                 'items' => [
                     [
-                        '',
-                        0,
+                        'label' => '',
+                        'value' => 0,
                     ],
                 ],
                 'foreign_table' => 'tx_pbnotifications_domain_model_notification',
@@ -76,15 +81,13 @@ return [
             'exclude' => 1,
             'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.starttime',
             'config' => [
-                'type' => 'input',
+                'type' => 'datetime',
                 'size' => 13,
-                'eval' => 'datetime',
                 'checkbox' => 0,
                 'default' => 0,
                 'range' => [
                     'lower' => mktime(0, 0, 0, date('m'), date('d'), date('Y')),
                 ],
-                'renderType' => 'inputDateTime',
                 ['behaviour' => ['allowLanguageSynchronization' => true]],
             ],
         ],
@@ -92,84 +95,83 @@ return [
             'exclude' => 1,
             'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.endtime',
             'config' => [
-                'type' => 'input',
+                'type' => 'datetime',
                 'size' => 13,
-                'eval' => 'datetime',
                 'checkbox' => 0,
                 'default' => 0,
                 'range' => [
                     'lower' => mktime(0, 0, 0, date('m'), date('d'), date('Y')),
                 ],
-                'renderType' => 'inputDateTime',
                 ['behaviour' => ['allowLanguageSynchronization' => true]],
             ],
         ],
         'date' => [
             'exclude' => 0,
-            'label' => 'LLL:EXT:pb_notifications/Resources/Private/Language/locallang_db.xlf:tx_pbnotifications_domain_model_notification.date',
+            'label' => $ll . 'tx_pbnotifications_domain_model_notification.date',
             'config' => [
-                'type' => 'input',
-                'renderType' => 'inputDateTime',
+                'type' => 'datetime',
                 'size' => 7,
-                'eval' => 'date,required',
                 'checkbox' => 1,
-                'default' => time()
+                'default' => time(),
+                'format' => 'date',
+                'required' => true
             ],
         ],
         'title' => [
             'exclude' => 1,
-            'label' => 'LLL:EXT:pb_notifications/Resources/Private/Language/locallang_db.xlf:tx_pbnotifications_domain_model_notification.title',
+            'label' => $ll . 'tx_pbnotifications_domain_model_notification.title',
             'config' => [
                 'type' => 'input',
                 'size' => 20,
-                'eval' => 'trim,required'
+                'eval' => 'trim',
+                'required' => true
             ],
         ],
         'content' => [
             'exclude' => 1,
-            'label' => 'LLL:EXT:pb_notifications/Resources/Private/Language/locallang_db.xlf:tx_pbnotifications_domain_model_notification.content',
+            'label' => $ll . 'tx_pbnotifications_domain_model_notification.content',
             'config' => [
                 'type' => 'text',
                 'cols' => 40,
                 'rows' => 15,
-                'eval' => 'trim,required',
+                'eval' => 'trim',
                 'enableRichtext' => true,
+                'required' => true,
 
             ],
         ],
         'images' => [
             'exclude' => 1,
-            'label' => 'LLL:EXT:pb_notifications/Resources/Private/Language/locallang_db.xlf:tx_pbnotifications_domain_model_notification.images',
-            'config' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::getFileFieldTCAConfig(
-                'images',
-                [
-                    'appearance' => [
-                        'createNewRelationLinkTitle' => 'LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:images.addFileReference'
-                    ],
-                    'minitems' => 0,
-                    'maxitems' => 3,
+            'label' => $ll . 'tx_pbnotifications_domain_model_notification.images',
+            'config' => [
+                ### !!! Watch out for fieldName different from columnName
+                'type' => 'file',
+                'allowed' => $GLOBALS['TYPO3_CONF_VARS']['GFX']['imagefile_ext'],
+                'appearance' => [
+                    'createNewRelationLinkTitle' => 'LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:images.addFileReference'
                 ],
-                $GLOBALS['TYPO3_CONF_VARS']['GFX']['imagefile_ext']
-            ),
+                'minitems' => 0,
+                'maxitems' => 3,
+            ],
         ],
         'type' => [
             'exclude' => 1,
-            'label' => 'LLL:EXT:pb_notifications/Resources/Private/Language/locallang_db.xlf:tx_pbnotifications_domain_model_notification.type',
+            'label' => $ll . 'tx_pbnotifications_domain_model_notification.type',
             'config' => [
                 'type' => 'select',
                 'renderType' => 'selectSingle',
                 'items' => [
-                    ['LLL:EXT:pb_notifications/Resources/Private/Language/locallang_db.xlf:tx_pbnotifications_domain_model_notification.type.information', '0'],
-                    ['LLL:EXT:pb_notifications/Resources/Private/Language/locallang_db.xlf:tx_pbnotifications_domain_model_notification.type.warning', '1'],
+                    ['label' => $ll . 'tx_pbnotifications_domain_model_notification.type.information', 'value' => '0'],
+                    ['label' => $ll . 'tx_pbnotifications_domain_model_notification.type.warning', 'value' => '1'],
                 ],
                 'size' => 1,
                 'maxitems' => 1,
-                'eval' => 'required',
+                'required' => true,
             ],
         ],
         'be_groups' => [
             'exclude' => 1,
-            'label' => 'LLL:EXT:pb_notifications/Resources/Private/Language/locallang_db.xlf:tx_pbnotifications_domain_model_notification.be_groups',
+            'label' => $ll . 'tx_pbnotifications_domain_model_notification.be_groups',
             'config' => [
                 'type' => 'select',
                 'renderType' => 'selectMultipleSideBySide',
@@ -181,7 +183,7 @@ return [
         ],
         'marked_as_read' => [
             'exclude' => 1,
-            'label' => 'LLL:EXT:pb_notifications/Resources/Private/Language/locallang_db.xlf:tx_pbnotifications_domain_model_notification.marked_as_read',
+            'label' => $ll . 'tx_pbnotifications_domain_model_notification.marked_as_read',
             'config' => [
                 'type' => 'select',
                 'renderType' => 'selectMultipleSideBySide',
@@ -196,3 +198,4 @@ return [
         ],
     ],
 ];
+return $tx_pb_notifications_domain_model_notification;

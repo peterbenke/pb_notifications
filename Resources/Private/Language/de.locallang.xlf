@@ -90,7 +90,7 @@
 			<trans-unit id="reminder.title">
 				<target>Ungelesene Benachrichtigungen</target>
 			</trans-unit>
-			<trans-unit id="reminder.message">
+			<trans-unit id="reminder.content">
 				<target>Sie haben ungelesene Benachrichtigungen. Bitte lesen Sie diese bevor Sie fortfahren.</target>
 			</trans-unit>
 

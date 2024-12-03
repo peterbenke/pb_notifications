@@ -1,18 +1,25 @@
 <?php
+
 namespace PeterBenke\PbNotifications\Domain\Repository;
 
 /**
- * PeterBenke
+ * PbNotifications
  */
+
 use PeterBenke\PbNotifications\Domain\Model\Notification;
+use PeterBenke\PbNotifications\Utility\BackendUserUtility;
 use PeterBenke\PbNotifications\Utility\ExtensionConfigurationUtility;
 
 /**
  * TYPO3
  */
+
 use TYPO3\CMS\Beuser\Domain\Model\BackendUser;
+use TYPO3\CMS\Core\Context\LanguageAspect;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\DomainObject\DomainObjectInterface;
+use TYPO3\CMS\Extbase\Persistence\Exception\InvalidQueryException;
 use TYPO3\CMS\Extbase\Persistence\Generic\Typo3QuerySettings;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;
@@ -22,8 +29,8 @@ use TYPO3\CMS\Extbase\Persistence\Repository;
 /**
  * Doctrine
  */
-use Doctrine\DBAL\DBALException as DoctrineDBALDBALException;
-use Doctrine\DBAL\Driver\Exception as DoctrineDBALDriverException;
+
+use Doctrine\DBAL\Exception as DoctrineDBALException;
 
 /**
  * Class NotificationRepository
@@ -32,257 +39,271 @@ use Doctrine\DBAL\Driver\Exception as DoctrineDBALDriverException;
 class NotificationRepository extends Repository
 {
 
-	/**
-	 * Initialize
-	 * @author Peter Benke <info@typomotor.de>
-	 */
-	public function initializeObject()
-	{
+    /**
+     * Initialize
+     */
+    public function initializeObject(): void
+    {
 
-		/** @var Typo3QuerySettings $querySettings */
-		$querySettings = $this->objectManager->get(Typo3QuerySettings::class);
-		$notificationsStoragePid = ExtensionConfigurationUtility::getNotificationsStoragePid();
+        /** @var Typo3QuerySettings $querySettings */
+        $querySettings = GeneralUtility::makeInstance(Typo3QuerySettings::class);
+        $notificationsStoragePid = ExtensionConfigurationUtility::getNotificationsStoragePid();
 
-		// If storage pid is set
-		if(intval($notificationsStoragePid) > 0){
-			$querySettings->setStoragePageIds([$notificationsStoragePid]);
-		// No storage pid is set => don't respect the storage pid
-		}else{
-			$querySettings->setRespectStoragePage(false);
-		}
+        // If storage pid is set
+        if (intval($notificationsStoragePid) > 0) {
+            $querySettings->setStoragePageIds([$notificationsStoragePid]);
+        } else {
+            // No storage pid is set => don't respect the storage pid
+            $querySettings->setRespectStoragePage(false);
+        }
 
-		// Get all notifications in the users current language or language = -1
-        $querySettings
-			->setRespectSysLanguage(true)
-			->setLanguageMode('content_fallback');
+        // Get all notifications in the users current language or language = -1
+        $querySettings->setRespectSysLanguage(true);
 
         $uc = $GLOBALS['BE_USER']->uc;
-		$langUid = $this->getLanguageUidForIsoCode($uc['lang'] ?? '');
+        $langUid = $this->getLanguageUidForIsoCode($uc['lang'] ?? '');
 
-		if($langUid) {
-			$querySettings->setLanguageUid($langUid);
-		}
+        if ($langUid) {
+            $languageAspect = GeneralUtility::makeInstance(LanguageAspect::class, $langUid);
+            $querySettings->setLanguageAspect($languageAspect);
+        }
 
         $this->setDefaultQuerySettings($querySettings);
 
-	}
+    }
 
-	/**
-	 * Find all notifications (overwrite parent::findAll()
-	 * @param array $ordering ordering
-	 * @return QueryResultInterface|array
-	 * @author Peter Benke <info@typomotor.de>
-	 */
-	public function findAll(array $ordering = ['date' => QueryInterface::ORDER_DESCENDING, 'type' => QueryInterface::ORDER_DESCENDING])
-	{
-		$query = $this->createQuery();
-		$query->setOrderings($ordering);
-		return $query->execute();
-		// $queryParser = $this->objectManager->get(\TYPO3\CMS\Extbase\Persistence\Generic\Storage\Typo3DbQueryParser::class);
-		// \TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($queryParser->convertQueryToDoctrineQueryBuilder($query)->getSQL());
-		// \TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($queryParser->convertQueryToDoctrineQueryBuilder($query)->getParameters());
-	}
+    /**
+     * Find all notifications (overwrite parent::findAll()
+     * @param array $ordering ordering
+     * @return array|DomainObjectInterface[]|QueryResultInterface
+     */
+    public function findAll(array $ordering = ['date' => QueryInterface::ORDER_DESCENDING, 'type' => QueryInterface::ORDER_DESCENDING]): array|QueryResultInterface
+    {
 
-	/**
-	 * Find all notifications, that are assigned to the user groups of the user
-	 * @return ObjectStorage|object
-	 * @author Peter Benke <info@typomotor.de>
-	 */
-	public function findOnlyNotificationsAssignedToUsersUserGroup()
-	{
+        $query = $this->createQuery();
+        $query->setOrderings($ordering);
+        return $query->execute();
+        // $queryParser = $this->objectManager->get(\TYPO3\CMS\Extbase\Persistence\Generic\Storage\Typo3DbQueryParser::class);
+        // \TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($queryParser->convertQueryToDoctrineQueryBuilder($query)->getSQL());
+        // \TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($queryParser->convertQueryToDoctrineQueryBuilder($query)->getParameters());
+    }
 
-		/**
-		 * @var Notification $notification
-		 * @var ObjectStorage<Notification> $notificationsReturn
-		 */
-		$notifications = $this->findAll();
+    /**
+     * Find all notifications, that are assigned to the user groups of the user.
+     * @return ObjectStorage
+     * @throws InvalidQueryException
+     */
+    public function findNotificationsAssignedToUserGroups():ObjectStorage
+    {
 
-		// Backend user groups of the current user
-		// $beUserGroups = $GLOBALS['BE_USER']->userGroups;
-		$beUserGroups = [];
-		foreach($GLOBALS['BE_USER']->userGroups as $key => $value){
-			$beUserGroups[] = $key;
-		}
+        // At first get all notifications
+        $notifications = $this->findAll();
+        $notificationsAssignedToUserGroups = GeneralUtility::makeInstance(ObjectStorage::class);
+
+        // Loop through all notifications
+        /** @var Notification $notification */
+        foreach($notifications as $notification) {
+
+            // Get the backend user groups assigned to this notification
+            $notificationUserGroups = GeneralUtility::intExplode(',', $notification->getBeGroups());
+
+            // If at least one group matches or the notification has no backend groups assigned or the user is admin
+            if (
+                count(array_intersect($notificationUserGroups, BackendUserUtility::getBackendUserGroupsForCurrentBackendUser())) > 0
+                ||
+                empty($notification->getBeGroups())
+                ||
+                $GLOBALS['BE_USER']->isAdmin()
+            ) {
+                $notificationsAssignedToUserGroups->attach($notification);
+            }
+
+        }
+
+        return $notificationsAssignedToUserGroups;
+
+    }
+
+    /**
+     * Find all notifications, that are assigned to the user groups of the user as QueryResultInterface.
+     * @return QueryResultInterface
+     * @throws InvalidQueryException
+     */
+    public function findNotificationsAssignedToUserGroupsAsQueryResultInterface(): QueryResultInterface
+    {
+
+        // At first get all notifications
+        $notifications = $this->findNotificationsAssignedToUserGroups();
+
+        $notificationUids = [];
+
+        // Loop through all notifications
+        /** @var Notification $notification */
+        foreach ($notifications as $notification) {
+            $notificationUids[] = $notification->getUid();
+        }
+
+        // Now get the notifications by the uids, which match to the user group(s)
+        // We need to do this that way, because the return has to be an object of type QueryResultInterface, so that the pagination works.
+        $query = $this->createQuery();
+
+        $result = $query
+            ->matching(
+                $query->in('uid', $notificationUids)
+            )
+        ;
+
+        return $result->execute();
+
+    }
 
 
-		// Create object storage
-		$notificationsReturn = $this->objectManager->get(ObjectStorage::class);
 
-		// Loop through all notifications
-		foreach($notifications as $notification){
+    # Until here everything is done.
 
-			// Get the backend user groups assigned to this notification
-			$notificationUserGroups = GeneralUtility::intExplode(',', $notification->getBeGroups());
 
-			// If at least one group matches or the notification has no backend groups assigned or the user is admin
-			if (
-				count(array_intersect($notificationUserGroups, $beUserGroups)) > 0
-				||
-				empty($notification->getBeGroups())
-				||
-				$GLOBALS['BE_USER']->isAdmin()
-			){
-				$notificationsReturn->attach($notification);
-			}
 
-		}
 
-		return $notificationsReturn;
+    /**
+     * Find all notifications, that are assigned to the user groups of the user and are unread
+     * @return ObjectStorage<Notification>
+     */
+    public function findUnreadNotificationsAssignedToUserGroups(): ObjectStorage
+    {
 
-	}
+        /**
+         * @var Notification $notification
+         * @var ObjectStorage<Notification> $notificationsReturn
+         */
+        $notifications = $this->findAll();
 
-	/**
-	 * Find all notifications, that are assigned to the user groups of the user and are unread
-	 * @return ObjectStorage|object
-	 * @author Peter Benke <info@typomotor.de>
-	 */
-	public function findOnlyUnreadNotificationsAssignedToUsersUserGroup()
-	{
+        // Backend user id
+        $beUserId = $GLOBALS['BE_USER']->user['uid'];
 
-		/**
-		 * @var Notification $notification
-		 * @var ObjectStorage<Notification> $notificationsReturn
-		 */
-		$notifications = $this->findAll();
+        // Create object storage
+        $notificationsReturn = GeneralUtility::makeInstance(ObjectStorage::class);
 
-		// Backend user groups of the current user
-		// $beUserGroups = $GLOBALS['BE_USER']->userGroups;
-		$beUserGroups = [];
-		foreach($GLOBALS['BE_USER']->userGroups as $key => $value){
-			$beUserGroups[] = $key;
-		}
+        // Loop through all notifications
+        foreach ($notifications as $notification) {
 
-		// Backend user id
-		$beUserId = $GLOBALS['BE_USER']->user['uid'];
+            // Get the backend user groups assigned to this notification
+            $notificationUserGroups = GeneralUtility::intExplode(',', $notification->getBeGroups());
 
-		// Create object storage
-		$notificationsReturn = $this->objectManager->get(ObjectStorage::class);
+            // Get the marked as read (backend user ids, who has read the notification)
+            $markedAsReadBeUsers = $notification->getMarkedAsRead();
+            $markedAsReadArray = [];
 
-		// Loop through all notifications
-		foreach($notifications as $notification){
+            foreach ($markedAsReadBeUsers as $markedAsReadBeUser) {
+                $markedAsReadArray[] = $markedAsReadBeUser->getUid();
+            }
 
-			// Get the backend user groups assigned to this notification
-			$notificationUserGroups = GeneralUtility::intExplode(',', $notification->getBeGroups());
+            $notificationIsRead = true;
 
-			// Get the marked as read (backend user ids, who has read the notification)
-			$markedAsReadBeUsers = $notification->getMarkedAsRead();
-			$markedAsReadArray = [];
+            // Notification not read yet
+            if (!in_array($beUserId, $markedAsReadArray)) {
+                $notificationIsRead = false;
+            }
 
-			foreach($markedAsReadBeUsers as $markedAsReadBeUser){
-				$markedAsReadArray[] = $markedAsReadBeUser->getUid();
-			}
+            if (
+                (
+                    // At least one group matches
+                    count(array_intersect($notificationUserGroups, BackendUserUtility::getBackendUserGroupsForCurrentBackendUser())) > 0
+                    ||
+                    // Notification has no backend groups assigned
+                    empty($notification->getBeGroups())
+                    ||
+                    // The user is admin
+                    $GLOBALS['BE_USER']->isAdmin()
+                )
 
-			$notificationIsRead = true;
+                &&
 
-			// Notification not read yet
-			if(!in_array($beUserId, $markedAsReadArray)){
-				$notificationIsRead = false;
-			}
+                (
+                // Notification is unread
+                !$notificationIsRead
+                )
+            ) {
+                $notificationsReturn->attach($notification);
+            }
 
-			if (
-				(
-					// At least one group matches
-					count(array_intersect($notificationUserGroups, $beUserGroups)) > 0
-					||
-					// Notification has no backend groups assigned
-					empty($notification->getBeGroups())
-					||
-					// The user is admin
-					$GLOBALS['BE_USER']->isAdmin()
-				)
+        }
 
-				&&
+        return $notificationsReturn;
 
-				(
-					// Notification is unread
-					!$notificationIsRead
-				)
-			){
-				$notificationsReturn->attach($notification);
-			}
+    }
 
-		}
+    /**
+     * Find all unread notifications.
+     * @param array $ordering
+     * @return ObjectStorage<Notification>
+     */
+    public function findUnreadNotifications(array $ordering = ['type' => QueryInterface::ORDER_DESCENDING, 'date' => QueryInterface::ORDER_DESCENDING]): ObjectStorage
+    {
 
-		return $notificationsReturn;
+        /**
+         * @var Notification $notification
+         * @var BackendUser $markedAsReadBeUser
+         * @var ObjectStorage<Notification> $notificationsReturn
+         */
 
-	}
+        // All notifications
+        $notifications = $this->findAll();
 
-	/**
-	 * Find all unread notifications
-	 * @param array $ordering
-	 * @return ObjectStorage|object
-	 * @author Peter Benke <info@typomotor.de>
-	 */
-	public function findOnlyUnreadNotifications(array $ordering = ['type' => QueryInterface::ORDER_DESCENDING, 'date' => QueryInterface::ORDER_DESCENDING])
-	{
+        // Backend user id
+        $beUserId = $GLOBALS['BE_USER']->user['uid'];
 
-		/**
-		 * @var Notification $notification
-		 * @var BackendUser $markedAsReadBeUser
-		 * @var ObjectStorage<Notification> $notificationsReturn
-		 */
+        // Create object storage
+        $notificationsReturn = GeneralUtility::makeInstance(ObjectStorage::class);
 
-		// All notifications
-		$notifications = $this->findAll();
+        // Loop through all notifications
+        foreach ($notifications as $notification) {
 
-		// Backend user id
-		$beUserId = $GLOBALS['BE_USER']->user['uid'];
+            // Get the marked as read (backend user ids, who has read the notification)
+            $markedAsReadBeUsers = $notification->getMarkedAsRead();
+            $markedAsReadArray = [];
 
-		// Create object storage
-		$notificationsReturn = $this->objectManager->get(ObjectStorage::class);
+            foreach ($markedAsReadBeUsers as $markedAsReadBeUser) {
+                $markedAsReadArray[] = $markedAsReadBeUser->getUid();
+            }
 
-		// Loop through all notifications
-		foreach($notifications as $notification){
+            // Notification not read yet
+            if (!in_array($beUserId, $markedAsReadArray)) {
+                $notificationsReturn->attach($notification);
+            }
 
-			// Get the marked as read (backend user ids, who has read the notification)
-			$markedAsReadBeUsers = $notification->getMarkedAsRead();
-			$markedAsReadArray = [];
+        }
 
-			foreach($markedAsReadBeUsers as $markedAsReadBeUser){
-				$markedAsReadArray[] = $markedAsReadBeUser->getUid();
-			}
+        return $notificationsReturn;
 
-			// Notification not read yet
-			if(!in_array($beUserId, $markedAsReadArray)){
-				$notificationsReturn->attach($notification);
-			}
+    }
 
-		}
+    /**
+     * Returns the current language uid given by the iso code
+     * @param string $isoCode
+     * @return int
+     * @author Peter Benke <info@typomotor.de>
+     */
+    private function getLanguageUidForIsoCode(string $isoCode): int
+    {
 
-		return $notificationsReturn;
+        if (!$isoCode) {
+            $isoCode = 'en';
+        }
+        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('sys_language');
 
-	}
+        try {
 
-	/**
-	 * Returns the current language uid given by the iso code
-	 * @param string $isoCode
-	 * @return int
-	 * @throws DoctrineDBALDBALException
-	 * @author Peter Benke <info@typomotor.de>
-	 */
-	private function getLanguageUidForIsoCode(string $isoCode):int
-	{
+            $result = $queryBuilder->select('uid')->from('sys_language')->where($queryBuilder->expr()->like('language_isocode', $queryBuilder->createNamedParameter($isoCode)))->executeQuery()
+                ->fetchAssociative();
+            if ($result && $result['uid']) {
+                return (int)($result['uid']);
+            }
 
-		if (!$isoCode){
-			$isoCode = 'en';
-		}
-		$queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('sys_language');
+        } catch (DoctrineDBALException) {
+            return 0;
+        }
 
-		try{
-
-			$result = $queryBuilder->select('uid')->from('sys_language')
-				->where($queryBuilder->expr()->like('language_isocode', $queryBuilder->createNamedParameter($isoCode)))
-				->execute()
-				->fetchAssociative()
-			;
-			if($result && $result['uid']) {
-				return (int)($result['uid']);
-			}
-
-		}catch(DoctrineDBALDriverException $e){
-		}
-
-		return 0;
-	}
+        return 0;
+    }
 
 }

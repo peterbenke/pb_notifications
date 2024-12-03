@@ -1,0 +1,90 @@
+{namespace f=TYPO3\CMS\Fluid\ViewHelpers}
+{namespace pb=PeterBenke\PbNotifications\ViewHelpers}
+<f:layout name="Backend/Default" />
+
+<f:section name="content">
+
+	<h1><f:translate key="notifications.list.headline" /> <f:translate key="notifications.list.headline.for" /> {f:if(condition:'{user.realName}', then: '{user.realName}', else: '{user.username}')}</h1>
+
+	<f:if condition="{notifications}">
+
+		<f:then>
+
+			<f:if condition="{pagination.allPageNumbers -> f:count()} > 1">
+				<ul class="pagination">
+					<f:for each="{pagination.allPageNumbers}" as="page">
+						<li class="page-item">
+							<f:link.action
+									arguments="{currentPageNumber:page}"
+									class="page-link {f:if(condition:'{currentPage}=={page}',then:'active')}"
+							>
+								{page}
+							</f:link.action>
+						</li>
+					</f:for>
+				</ul>
+
+				<hr>
+
+			</f:if>
+
+			<f:for each="{paginator.paginatedItems}" as="notification">
+
+				<div class="panel panel-{f:if(condition:'{notification.type} == 1', then: 'danger', else: 'info')} {pb:ifMarkedAsRead(markedAsRead:'{notification.markedAsRead}', then: 'markedAsRead', else: 'unread')}">
+					<div class="panel-heading clearfix">
+						<span class="t3js-icon icon icon-size-small icon-state-default">
+							<span class="icon-markup">
+								<span class="icon-unify">
+									<i class="fa fa-{f:if(condition:'{notification.type} == 1', then: 'exclamation', else: 'info')}"></i>
+								</span>
+							</span>
+						</span>
+						<span><f:format.date date="{notification.date}" format="{f:translate(key:'notifications.list.dateFormat')}" /></span>
+					</div>
+					<div class="panel-body">
+						<h2>{notification.title}</h2>
+
+						<f:if condition="{notification.images}">
+							<div class="images">
+								<f:for each="{notification.images}" as="image">
+									<a data-fslightbox="gallery" href="{image.originalResource.publicUrl}">
+										<f:image maxWidth="250" src="{image.originalResource.originalFile.uid}" alt="{image.originalResource.originalFile.alternative}" />
+										<br>
+									</a>
+								</f:for>
+							</div>
+						</f:if>
+
+						<div class="content">
+							<f:format.raw>{notification.content}</f:format.raw>
+						</div>
+
+					</div>
+				</div>
+
+				<pb:ifMarkedAsRead markedAsRead="{notification.markedAsRead}">
+					<f:then>
+						<f:link.action class="btn btn-warning" action="markAsUnread" arguments="{uid:notification.uid}"><i class="fa fa-close"></i> <f:translate key="notifications.list.markAsUnread" /></f:link.action>
+					</f:then>
+					<f:else>
+						<f:link.action class="btn btn-success" action="markAsRead" arguments="{uid:notification.uid}"><i class="fa fa-check"></i> <f:translate key="notifications.list.gotit" /></f:link.action>
+					</f:else>
+				</pb:ifMarkedAsRead>
+
+				<hr>
+
+			</f:for>
+
+		</f:then>
+
+
+		<f:else>
+			<div class="alert alert-warning">
+				<i class="fa fa-info"></i> <f:translate key="notifications.list.noNotifications" />
+			</div>
+		</f:else>
+
+	</f:if>
+
+</f:section>
+

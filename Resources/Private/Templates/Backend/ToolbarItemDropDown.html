@@ -1,0 +1,76 @@
+<h3 class="dropdown-headline">{f:translate(key:'toolbaritem.title', extensionName: 'pb_notifications')}</h3>
+
+<ul class="dropdown-list">
+
+	<f:if condition="{unreadNotifications -> f:count()} > 0">
+
+		<f:comment><!-- If we have unread notifications --></f:comment>
+
+		<f:then>
+			<f:for each="{unreadNotifications}" as="notification" iteration="iteration">
+
+				<f:comment><!-- If we are below of the maximum number of notifications to be shown here --></f:comment>
+
+				<f:if condition="{iteration.index} < {maxNumberOfNotificationsInToolbar}">
+
+					<li class="divider"></li>
+					<li class="dropdown-item-text">
+						<div>
+							<f:if condition="{notification.type} == 1">
+
+								<f:comment><!-- Notification type: warning --></f:comment>
+
+								<f:then>
+									<span class="text-danger">
+										<i class="fa fa-exclamation"></i>&nbsp;
+										<f:format.date date="{notification.date}" format="{f:translate(key:'notifications.list.dateFormat', extensionName: 'pb_notifications')}" />
+										<br>
+										<strong>{notification.title}</strong>:
+									</span>
+								</f:then>
+
+								<f:comment><!-- Notification type: information --></f:comment>
+
+								<f:else>
+									<i class="fa fa-info"></i>&nbsp;
+									<f:format.date date="{notification.date}" format="{f:translate(key:'notifications.list.dateFormat', extensionName: 'pb_notifications')}" />
+									<br>
+									<strong>{notification.title}</strong>:
+								</f:else>
+							</f:if>
+							<br>
+							<f:format.crop maxCharacters="45" respectWordBoundaries="false">{notification.content -> f:format.stripTags()}</f:format.crop>
+						</div>
+					</li>
+
+				</f:if>
+
+			</f:for>
+		</f:then>
+
+		<f:comment><!-- No unread notifications --></f:comment>
+
+		<f:else>
+			<li class="dropdown-item-text"><em>{f:translate(key:'toolbaritem.noNotifications', extensionName: 'pb_notifications')}</em></li>
+		</f:else>
+
+	</f:if>
+
+	<li class="divider"></li>
+
+	<f:comment><!-- Link to all notifications --></f:comment>
+
+	<li>
+		<f:comment><!-- data-dispatch-args-list: see Configuration/Backend/Modules.php --></f:comment>
+		<a
+				href="#"
+				data-dispatch-action="TYPO3.ModuleMenu.showModule"
+				data-dispatch-args-list="user_pb_notificationsNotifications"
+				title="{f:translate(key:'toolbaritem.allNotifications', extensionName: 'pb_notifications')}"
+				class="dropdown-item"
+		>
+			<i class="fa fa-bell"></i>&nbsp; {f:translate(key:'toolbaritem.allNotifications', extensionName: 'pb_notifications')}
+		</a>
+	</li>
+
+</ul>

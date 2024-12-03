@@ -1,20 +1,24 @@
 <?php
+
 namespace PeterBenke\PbNotifications\ViewHelpers;
 
 /**
  * PbNotifications
  */
+
 use PeterBenke\PbNotifications\Domain\Model\Notification;
 
 /**
  * TYPO3Fluid
  */
+
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractConditionViewHelper;
 
 /**
  * TYPO3
  */
+
 use TYPO3\CMS\Beuser\Domain\Model\BackendUser;
 
 /**
@@ -24,55 +28,54 @@ use TYPO3\CMS\Beuser\Domain\Model\BackendUser;
 class IfUnreadNotificationsExistViewHelper extends AbstractConditionViewHelper
 {
 
-	/**
-	 * Initialize arguments
-	 * @author Peter Benke <info@typomotor.de>
-	 */
-	public function initializeArguments()
-	{
-		$this->registerArgument('notifications', 'object', 'Object storage of notifications');
-		parent::initializeArguments();
-	}
+    /**
+     * Initialize arguments
+     * @return void
+     */
+    public function initializeArguments(): void
+    {
+        $this->registerArgument('notifications', 'object', 'Object storage of notifications');
+        parent::initializeArguments();
+    }
 
-	/**
-	 * Evaluate
-	 * @param array|null $arguments
-	 * @param RenderingContextInterface $renderingContext
-	 * @return bool
-	 * @author Peter Benke <info@typomotor.de>
-	 */
-	public static function verdict(array $arguments, RenderingContextInterface $renderingContext): bool
-	{
+    /**
+     * Evaluate
+     * @param array|null $arguments
+     * @param RenderingContextInterface $renderingContext
+     * @return bool
+     */
+    public static function verdict(?array $arguments, RenderingContextInterface $renderingContext): bool
+    {
 
-		// Backend user id
-		$beUserId = $GLOBALS['BE_USER']->user['uid'];
+        // Backend user id
+        $beUserId = $GLOBALS['BE_USER']->user['uid'];
 
-		$unreadNotificationsExist = false;
+        $unreadNotificationsExist = false;
 
-		if(isset($arguments['notifications'])){
+        if (isset($arguments['notifications'])) {
 
-			/** @var Notification $notification */
-			foreach($arguments['notifications'] as $notification){
+            /** @var Notification $notification */
+            foreach ($arguments['notifications'] as $notification) {
 
-				$markedAsReadObjects = $notification->getMarkedAsRead();
-				$markedAsRead = array();
+                $markedAsReadObjects = $notification->getMarkedAsRead();
+                $markedAsRead = array();
 
-				/** @var BackendUser $beUserMarkedAsRead */
-				foreach($markedAsReadObjects as $beUserMarkedAsRead){
-					$markedAsRead[] = $beUserMarkedAsRead->getUid();
-				}
+                /** @var BackendUser $beUserMarkedAsRead */
+                foreach ($markedAsReadObjects as $beUserMarkedAsRead) {
+                    $markedAsRead[] = $beUserMarkedAsRead->getUid();
+                }
 
-				// Unread notification exist
-				if(!in_array($beUserId, $markedAsRead)){
-					$unreadNotificationsExist = true;
-					break;
-				}
+                // Unread notification exist
+                if (!in_array($beUserId, $markedAsRead)) {
+                    $unreadNotificationsExist = true;
+                    break;
+                }
 
-			}
-		}
+            }
+        }
 
-		return $unreadNotificationsExist;
+        return $unreadNotificationsExist;
 
-	}
+    }
 
 }

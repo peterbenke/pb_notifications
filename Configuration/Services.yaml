@@ -1,0 +1,16 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+
+  PeterBenke\PbNotifications\:
+    resource: '../Classes/*'
+
+  PeterBenke\PbNotifications\Backend\ToolbarItems\NotificationsToolbarItem:
+    public: true
+
+  PeterBenke\PbNotifications\EventListener\Backend\AfterBackendPageRender:
+    tags:
+      - name: event.listener
+        identifier: 'pb-extension/after-backend-page-render'

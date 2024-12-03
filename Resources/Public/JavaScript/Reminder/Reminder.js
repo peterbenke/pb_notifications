@@ -1,33 +1,43 @@
-/**
- * Reminder for the notifications
- */
-define(['jquery', 'TYPO3/CMS/Backend/Modal'], function ($, Modal) {
+import Modal from '@typo3/backend/modal.js';
+import ModuleMenu from '@typo3/backend/module-menu.js';
 
-    'use strict';
+class ReminderPbNotifications {
 
-    var Reminder = {};
+    /**
+     * Show the modal to the user, that tg´here are unread notifications
+     * init() called in /Classes/EventListener/Backend/AfterBackendPageRender.php->__invoke().
+     * @see https://docs.typo3.org/m/typo3/reference-coreapi/12.4/en-us/ApiOverview/Backend/JavaScript/Modules/Modals.html
+     */
+    init(contents) {
 
-    Reminder.initModal = function (force) {
-
-        $(function () {
-			Modal.show(
-				TYPO3.lang['reminder.title'],
-				TYPO3.lang['reminder.message'],
-				TYPO3.Severity.warning,
-				[{
-					text: TYPO3.lang['button.ok'] || 'OK',
-					btnClass: 'btn-warning',
-					name: 'ok',
-					active: true
-				}]
-			).on('button.clicked', function () {
-				Modal.currentModal.trigger('modal-dismiss');
-			}).on('hidden.bs.modal', function () {
-				top.goToModule('user_PbNotificationsNotifications');
-			});
+        const modal = Modal.advanced({
+            title: contents['title'],
+            content: contents['content'],
+            buttons: [
+                {
+                    text: 'Ok',
+                    name: 'save',
+                    icon: 'actions-check',
+                    active: true,
+                    btnClass: 'btn-primary',
+                    trigger: function(event, modal) {
+                        modal.hideModal();
+                    }
+                }
+            ]
         });
-    };
 
-    return Reminder;
+        modal.addEventListener('button.clicked', (e) => {
+            if ((e.target).getAttribute('name') === 'ok') {
+                // ...
+            }
+            modal.hideModal();
+            ModuleMenu.App.showModule('user_pb_notificationsNotifications')
+        });
 
-});
+    }
+}
+
+const reminderPbNotificationsObject = new ReminderPbNotifications;
+"undefined" != typeof TYPO3 && (TYPO3.ReminderPbNotifications = reminderPbNotificationsObject);
+export default reminderPbNotificationsObject;

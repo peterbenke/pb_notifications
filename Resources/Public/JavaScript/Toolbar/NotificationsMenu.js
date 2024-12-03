@@ -1,52 +1,49 @@
-/**
- * Module: TYPO3/CMS/PbNotifications/Toolbar/NotificationsMenu
- * Notifications menu handler
- */
-define(['jquery', 'TYPO3/CMS/Backend/Icons'], function($) {
-	'use strict';
+import $ from "jquery";
+import AjaxRequest from "@typo3/core/ajax/ajax-request.js";
 
-	var NotificationsMenu = {
-		options: {
-			containerSelector: '#peterbenke-pbnotifications-backend-toolbaritems-notificationstoolbaritem',
-			menuContainerSelector: '.dropdown-menu',
-			toolbarIconSelector: '.dropdown-toggle'
-		}
-	};
+let PbNotificationsMenu = {
+    options: {
+        // See source code of the backend module for the selectors
+        containerSelector: '#peterbenke-pbnotifications-backend-toolbaritems-notificationstoolbaritem',
+        menuContainerSelector: '.dropdown-menu',
+        toolbarIconSelector: '.dropdown-toggle'
+    }
+};
 
-	/**
-	 * Displays the menu and does the AJAX call to the TYPO3 backend
-	 */
-	NotificationsMenu.updateMenu = function() {
+class UpdatePbNotificationsMenu {
 
-		// Update the menu item
-		$.ajax({
-			url: TYPO3.settings.ajaxUrls['pb_notifications_menu_item'],
-			type: 'post',
-			cache: false,
-			success: function(data) {
-				$(NotificationsMenu.options.containerSelector).find(NotificationsMenu.options.toolbarIconSelector).html(data);
-			}
-		});
+    /**
+     * Update the menu item and the menu.
+     * Set in /Classes/Backend/ToolbarItems/NotificationsToolbarItem.php->updateMenuHook().
+     * init() called in /Classes/Backend/ToolbarItems/NotificationsToolbarItem.php->__construct().
+     */
+    init() {
+        document.addEventListener("peterbenke:pbnotifications:updateRequested", (() => this.updateMenuItem()));
+        document.addEventListener("peterbenke:pbnotifications:updateRequested", (() => this.updateMenu()));
+    }
 
-		// Update the menu
-		$.ajax({
-			url: TYPO3.settings.ajaxUrls['pb_notifications_menu'],
-			type: 'post',
-			cache: false,
-			success: function(data) {
-				$(NotificationsMenu.options.containerSelector).find(NotificationsMenu.options.menuContainerSelector).html(data);
-			}
-		});
+    /**
+     * Update the toolbar menu item
+     * @see /Configuration/Backend/AjaxRoutes.php: 'pb_notifications_menu_item'
+     */
+    updateMenuItem = function() {
+        new AjaxRequest(TYPO3.settings.ajaxUrls.pb_notifications_menu_item).get().then((async data => {
+            $(PbNotificationsMenu.options.containerSelector).find(PbNotificationsMenu.options.toolbarIconSelector).html(await data.resolve());
+        }));
+    }
 
-	};
+    /**
+     * Update the toolbar menu
+     * @see /Configuration/Backend/AjaxRoutes.php: 'pb_notifications_menu'
+     */
+    updateMenu = function() {
+        new AjaxRequest(TYPO3.settings.ajaxUrls.pb_notifications_menu).get().then((async data => {
+            $(PbNotificationsMenu.options.containerSelector).find(PbNotificationsMenu.options.menuContainerSelector).html(await data.resolve());
+        }));
+    }
 
-	$(function() {
-		NotificationsMenu.updateMenu();
-	});
+}
 
-	// expose to global, because we need access from the hook (/Classes/Backend/ToolbarItems/NotificationsToolbarItem.php => updateNumberOfNotificationsHook)
-	TYPO3.PbNotificationsMenu = NotificationsMenu;
-
-	return NotificationsMenu;
-
-});
+const pbNotificationsMenuObject = new UpdatePbNotificationsMenu;
+"undefined" != typeof TYPO3 && (TYPO3.UpdatePbNotificationsMenu = pbNotificationsMenuObject);
+export default pbNotificationsMenuObject;
