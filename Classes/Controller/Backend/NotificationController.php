@@ -105,6 +105,7 @@ class NotificationController extends ActionController
 
         // Important: write this in that way to enable including css in initializeAction()
         $view = $this->moduleTemplateFactory->create($this->request);
+        $view->assign('user', $GLOBALS['BE_USER']->user);
 
         // Get all notifications assigned to the user groups of the current backend user
         $notifications = $this->notificationRepository->findNotificationsAssignedToUserGroupsAsQueryResultInterface();
@@ -130,7 +131,6 @@ class NotificationController extends ActionController
 
         $view->assignMultiple(
             [
-                'user' => $GLOBALS['BE_USER']->user,
                 'notifications' => $notifications,
                 'pagination' => $pagination,
                 'paginator' => $paginator,
