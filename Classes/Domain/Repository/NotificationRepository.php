@@ -126,14 +126,18 @@ class NotificationRepository extends Repository
 
     /**
      * Find all notifications, that are assigned to the user groups of the user as QueryResultInterface.
-     * @return QueryResultInterface
+     * @return QueryResultInterface|null
      * @throws InvalidQueryException
      */
-    public function findNotificationsAssignedToUserGroupsAsQueryResultInterface(): QueryResultInterface
+    public function findNotificationsAssignedToUserGroupsAsQueryResultInterface(): ?QueryResultInterface
     {
 
         // At first get all notifications
         $notifications = $this->findNotificationsAssignedToUserGroups();
+
+        if ($notifications->count() == 0) {
+            return null;
+        }
 
         $notificationUids = [];
 
@@ -142,6 +146,8 @@ class NotificationRepository extends Repository
         foreach ($notifications as $notification) {
             $notificationUids[] = $notification->getUid();
         }
+
+
 
         // Now get the notifications by the uids, which match to the user group(s)
         // We need to do this that way, because the return has to be an object of type QueryResultInterface, so that the pagination works.

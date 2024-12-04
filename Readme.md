@@ -65,6 +65,7 @@ None at the moment.
 
 | Version | Changes                                                                          |
 |---------|----------------------------------------------------------------------------------|
+| 12.4.1  | Bugfix, in no notifications stored                                               |
 | 12.4.0  | Compatibility TYPO3 12                                                           |
 | 11.5.1  | Compatibility with TYPO3 11                                                      |
 | 10.4.0  | Cleanup code                                                                     |

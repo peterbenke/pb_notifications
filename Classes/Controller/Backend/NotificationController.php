@@ -109,6 +109,10 @@ class NotificationController extends ActionController
         // Get all notifications assigned to the user groups of the current backend user
         $notifications = $this->notificationRepository->findNotificationsAssignedToUserGroupsAsQueryResultInterface();
 
+        if (empty($notifications)) {
+            return $view->renderResponse($this->template);
+        }
+
         // Pagination
         // see: https://docs.typo3.org/m/typo3/reference-coreapi/main/en-us/ApiOverview/Pagination/Index.html
         $currentPage = $this->request->hasArgument('currentPageNumber')
