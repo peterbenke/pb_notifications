@@ -1,6 +1,6 @@
 <?php
 
-defined('TYPO3') or die;
+defined('TYPO3') || die;
 
 // Add new entry for folder properties "Contains plugin"
 $GLOBALS['TCA']['pages']['columns']['module']['config']['items'][] = [

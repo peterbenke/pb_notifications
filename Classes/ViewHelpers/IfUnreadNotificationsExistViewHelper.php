@@ -32,6 +32,7 @@ class IfUnreadNotificationsExistViewHelper extends AbstractConditionViewHelper
      * Initialize arguments
      * @return void
      */
+    #[\Override]
     public function initializeArguments(): void
     {
         $this->registerArgument('notifications', 'object', 'Object storage of notifications');
@@ -44,6 +45,7 @@ class IfUnreadNotificationsExistViewHelper extends AbstractConditionViewHelper
      * @param RenderingContextInterface $renderingContext
      * @return bool
      */
+    #[\Override]
     public static function verdict(?array $arguments, RenderingContextInterface $renderingContext): bool
     {
 
@@ -58,7 +60,7 @@ class IfUnreadNotificationsExistViewHelper extends AbstractConditionViewHelper
             foreach ($arguments['notifications'] as $notification) {
 
                 $markedAsReadObjects = $notification->getMarkedAsRead();
-                $markedAsRead = array();
+                $markedAsRead = [];
 
                 /** @var BackendUser $beUserMarkedAsRead */
                 foreach ($markedAsReadObjects as $beUserMarkedAsRead) {

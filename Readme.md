@@ -42,8 +42,8 @@ Install this extension via composer
 ### Configuration
 
 1. Create a sysfolder, where the notifications will be stored
-2. Go to extension configuration and input the uid of this sysfolder and the number of notifications, which should be displayed in the top bar inside the TYPO3 backend
-3. In the extension configuration you have the possibility to force, that a popup will be shown, after the user logs into the backend, if he has unread notifications
+2. Go to extension configuration ("Settings") and input the uid of this sysfolder and the number of notifications, which should be displayed in the top bar inside the TYPO3 backend
+3. In the extension configuration you have the possibility to force a popup to be shown, after the user logs into the backend, if he has unread notifications
 
 
 ## UsersManual
@@ -60,28 +60,4 @@ Do not forget to add up to 3 images to your notification to illustrate the infor
 ## KnownProblems
 
 None at the moment.
-
-## Change log
-
-| Version | Changes                                                                          |
-|---------|----------------------------------------------------------------------------------|
-| 12.4.2  | Bugfix in headline (username)                                                    |
-| 12.4.1  | Bugfix, if no notifications are stored                                           |
-| 12.4.0  | Compatibility TYPO3 12                                                           |
-| 11.5.1  | Compatibility with TYPO3 11                                                      |
-| 10.4.0  | Cleanup code                                                                     |
-| 3.0.2   | Fixes: Missing Localizations of some fields                                      |
-|         | Fixes: Enable rich text for Notification Content field                           |
-| 3.0.1   | Compatibility to TYPO3 10, thanks to Jörg Velletti (https://github.com/velletti) |
-| 2.0.0   | Compatibility to TYPO3 9, thanks to Sybille Peters (https://github.com/sypets)   |
-| 1.1.7   | Enable links also, if RTE is installed                                           |
-| 1.1.6   | Update documentation                                                             |
-| 1.1.5   | Enable links in notifications                                                    |
-| 1.1.4   | Bugfix condition to show the popup warning                                       |
-| 1.1.3   | ---                                                                              |
-| 1.1.2   | Change order in notification list                                                |
-| 1.1.1   | Bugfix link overview                                                             |
-| 1.1.0   | Possibility to show popup after user login                                       |
-| 1.0.2   | TYPO3 8.7 also in composer.json                                                  |     
-| 1.0.1   | TYPO3 8.7 and documentation                                                      |     
-| 1.0.0   | Init Version                                                                     |            
+            

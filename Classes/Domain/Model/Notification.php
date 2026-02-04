@@ -45,7 +45,7 @@ class Notification extends AbstractEntity
     /**
      * @var ObjectStorage<FileReference>|null
      */
-    protected ?ObjectStorage $images;
+    protected ?ObjectStorage $images = null;
 
     /**
      * @var int

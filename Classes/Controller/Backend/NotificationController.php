@@ -14,7 +14,6 @@ use PeterBenke\PbNotifications\Domain\Repository\NotificationRepository;
  * TYPO3
  */
 
-use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Backend\Attribute\AsController;
 use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
@@ -28,14 +27,16 @@ use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Pagination\QueryResultPaginator;
 use TYPO3\CMS\Extbase\Persistence\Exception\IllegalObjectTypeException;
 use TYPO3\CMS\Extbase\Persistence\Exception\InvalidQueryException;
+use TYPO3\CMS\Extbase\Persistence\Exception\UnknownObjectException;
 use TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager;
+use TYPO3\CMS\Extbase\Persistence\QueryResultInterface;
 
 /**
  * Psr
  */
 
 use Psr\Http\Message\ResponseInterface;
-use TYPO3\CMS\Extbase\Persistence\Exception\UnknownObjectException;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Class NotificationController
@@ -110,7 +111,7 @@ class NotificationController extends ActionController
         // Get all notifications assigned to the user groups of the current backend user
         $notifications = $this->notificationRepository->findNotificationsAssignedToUserGroupsAsQueryResultInterface();
 
-        if (empty($notifications)) {
+        if (!$notifications instanceof QueryResultInterface) {
             return $view->renderResponse($this->template);
         }
 
@@ -190,7 +191,7 @@ class NotificationController extends ActionController
         $notification = $this->notificationRepository->findByUid(intval($arguments['uid']));
         $beUser = $this->backendUserRepository->findByUid(intval($beUserId));
 
-        if($readUnread == 'read'){
+        if($readUnread === 'read'){
             $notification->addMarkedAsRead($beUser);
         }else{
             $notification->removeMarkedAsRead($beUser);

@@ -40,6 +40,13 @@ class NotificationRepository extends Repository
 {
 
     /**
+     * Constructor
+     */
+    public function __construct(private readonly ConnectionPool $connectionPool)
+    {
+        parent::__construct();
+    }
+    /**
      * Initialize
      */
     public function initializeObject(): void
@@ -63,7 +70,7 @@ class NotificationRepository extends Repository
         $uc = $GLOBALS['BE_USER']->uc;
         $langUid = $this->getLanguageUidForIsoCode($uc['lang'] ?? '');
 
-        if ($langUid) {
+        if ($langUid !== 0) {
             $languageAspect = GeneralUtility::makeInstance(LanguageAspect::class, $langUid);
             $querySettings->setLanguageAspect($languageAspect);
         }
@@ -77,6 +84,7 @@ class NotificationRepository extends Repository
      * @param array $ordering ordering
      * @return array|DomainObjectInterface[]|QueryResultInterface
      */
+    #[\Override]
     public function findAll(array $ordering = ['date' => QueryInterface::ORDER_DESCENDING, 'type' => QueryInterface::ORDER_DESCENDING]): array|QueryResultInterface
     {
 
@@ -135,7 +143,7 @@ class NotificationRepository extends Repository
         // At first get all notifications
         $notifications = $this->findNotificationsAssignedToUserGroups();
 
-        if ($notifications->count() == 0) {
+        if ($notifications->count() === 0) {
             return null;
         }
 
@@ -292,15 +300,19 @@ class NotificationRepository extends Repository
     private function getLanguageUidForIsoCode(string $isoCode): int
     {
 
-        if (!$isoCode) {
+        if ($isoCode === '' || $isoCode === '0') {
             $isoCode = 'en';
         }
-        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('sys_language');
+        $queryBuilder = $this->connectionPool->getQueryBuilderForTable('sys_language');
 
         try {
 
-            $result = $queryBuilder->select('uid')->from('sys_language')->where($queryBuilder->expr()->like('language_isocode', $queryBuilder->createNamedParameter($isoCode)))->executeQuery()
-                ->fetchAssociative();
+            $result = $queryBuilder
+                ->select('uid')->from('sys_language')
+                ->where($queryBuilder->expr()->like('language_isocode', $queryBuilder->createNamedParameter($isoCode)))
+                ->executeQuery()
+                ->fetchAssociative()
+            ;
             if ($result && $result['uid']) {
                 return (int)($result['uid']);
             }

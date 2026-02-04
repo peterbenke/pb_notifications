@@ -26,6 +26,7 @@ class IfMarkedAsReadViewHelper extends AbstractConditionViewHelper
      * Initialize arguments
      * @return void
      */
+    #[\Override]
     public function initializeArguments(): void
     {
         $this->registerArgument('markedAsRead', 'object', 'Object storage of backend users, who has read this notification');
@@ -38,6 +39,7 @@ class IfMarkedAsReadViewHelper extends AbstractConditionViewHelper
      * @param RenderingContextInterface $renderingContext
      * @return bool
      */
+    #[\Override]
     public static function verdict(?array $arguments, RenderingContextInterface $renderingContext): bool
     {
 
@@ -51,13 +53,8 @@ class IfMarkedAsReadViewHelper extends AbstractConditionViewHelper
                 $markedAsRead[] = $beUserMarkedAsRead->getUid();
             }
         }
-
         // Notification already read
-        if (in_array($beUserId, $markedAsRead)) {
-            return true;
-        }
-
-        return false;
+        return in_array($beUserId, $markedAsRead);
 
     }
 

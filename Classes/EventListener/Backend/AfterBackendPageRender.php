@@ -22,12 +22,15 @@ use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 /**
  * Initializes the modal with message of unread notifications
- * @see https://docs.typo3.org/m/typo3/reference-coreapi/12.4/en-us/ApiOverview/Events/Events/Backend/AfterBackendPageRenderEvent.html
+ * @see https://docs.typo3.org/m/typo3/reference-coreapi/13.4/en-us/ApiOverview/Events/Events/Backend/AfterBackendPageRenderEvent.html
  * @author Peter Benke <info@typomotor.de>
  * @noinspection PhpUnused
  */
-final class AfterBackendPageRender
+final readonly class AfterBackendPageRender
 {
+    public function __construct(private PageRenderer $pageRenderer)
+    {
+    }
     public function __invoke(AfterBackendPageRenderEvent $event): void
     {
 
@@ -58,8 +61,7 @@ final class AfterBackendPageRender
         ];
 
         // Load the javaScript module for the modal
-        /** @var PageRenderer $pageRenderer */
-        $pageRenderer = GeneralUtility::makeInstance(PageRenderer::class);
+        $pageRenderer = $this->pageRenderer;
         $pageRenderer->getJavaScriptRenderer()->addJavaScriptModuleInstruction(
             JavaScriptModuleInstruction::create('@peterBenke/pbNotifications/Reminder/Reminder.js')->invoke('init', $contents)
         );

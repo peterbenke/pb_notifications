@@ -50,19 +50,14 @@ class NotificationsToolbarItem implements ToolbarItemInterface, RequestAwareTool
     private ServerRequestInterface $request;
 
     /**
-     * @var BackendViewFactory
+     * @var ObjectStorage<Notification>
      */
-    private BackendViewFactory $backendViewFactory;
+    private readonly ObjectStorage $notifications;
 
     /**
      * @var ObjectStorage<Notification>
      */
-    private ObjectStorage $notifications;
-
-    /**
-     * @var ObjectStorage<Notification>
-     */
-    private ObjectStorage $onlyUnreadNotifications;
+    private readonly ObjectStorage $onlyUnreadNotifications;
 
     /**
      * Constructor
@@ -79,11 +74,8 @@ class NotificationsToolbarItem implements ToolbarItemInterface, RequestAwareTool
      * @param BackendViewFactory $backendViewFactory
      * @throws InvalidQueryException
      */
-    public function __construct(BackendViewFactory $backendViewFactory)
+    public function __construct(private readonly BackendViewFactory $backendViewFactory)
     {
-
-        // BackendViewFactory
-        $this->backendViewFactory = $backendViewFactory;
 
         // Repository
         $notificationRepository = GeneralUtility::makeInstance(NotificationRepository::class);
