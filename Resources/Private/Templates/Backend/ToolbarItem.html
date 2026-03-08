@@ -17,7 +17,14 @@
 
 	<f:else>
 		<span title="{f:translate(key:'toolbaritem.title', extensionName: 'pb_notifications')}">
-			<core:icon identifier="pb-notifications-toolbar-menu" size="small" />
+            <f:if condition="{t3versionMajor} == 12">
+                <f:then>
+                    <core:icon identifier="pb-notifications-toolbar-menu-white" size="small" />
+                </f:then>
+                <f:else>
+                    <core:icon identifier="pb-notifications-toolbar-menu" size="small" alternativeMarkupIdentifier="inline"/>
+                </f:else>
+            </f:if>
 		</span>
 	</f:else>
 

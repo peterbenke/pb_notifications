@@ -21,6 +21,7 @@ use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Beuser\Domain\Model\BackendUser;
 use TYPO3\CMS\Beuser\Domain\Repository\BackendUserRepository;
 use TYPO3\CMS\Core\Http\HtmlResponse;
+use TYPO3\CMS\Core\Information\Typo3Version;
 use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Pagination\SlidingWindowPagination;
 use TYPO3\CMS\Extbase\Http\ForwardResponse;
@@ -79,6 +80,7 @@ class NotificationController extends ActionController
         protected readonly PageRenderer $pageRenderer,
         protected readonly NotificationRepository $notificationRepository,
         protected readonly NotificationsToolbarItem $notificationsToolbarItem,
+        protected readonly Typo3Version $typo3Version
     )
     {
     }
@@ -135,6 +137,7 @@ class NotificationController extends ActionController
                 'pagination' => $pagination,
                 'paginator' => $paginator,
                 'currentPage' => $currentPage,
+                't3versionMajor' => $this->typo3Version->getMajorVersion(),
             ]
         );
 
